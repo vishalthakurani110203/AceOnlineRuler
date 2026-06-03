@@ -76,31 +76,14 @@ const jsonLd = {
 
     {gaId && (
       <Fragment>
-        <!-- Google tag (gtag.js) with Consent Mode v2 -->
+        <!-- Google tag (gtag.js) -->
+        <script async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}></script>
         <script is:inline define:vars={{ gaId }}>
           window.dataLayer = window.dataLayer || [];
           function gtag() { dataLayer.push(arguments); }
-          window.gtag = window.gtag || gtag;
-
-          // Default: deny storage until the visitor consents (GDPR-safe).
-          // The cookie banner flips analytics_storage to "granted" on accept;
-          // until then GA runs in cookieless, privacy-preserving mode.
-          var prior = null;
-          try { prior = localStorage.getItem("ror.consent.v1"); } catch (e) {}
-          gtag("consent", "default", {
-            ad_storage: "denied",
-            ad_user_data: "denied",
-            ad_personalization: "denied",
-            analytics_storage: prior === "granted" ? "granted" : "denied",
-            functionality_storage: "granted",
-            security_storage: "granted",
-            wait_for_update: 500,
-          });
-
           gtag("js", new Date());
-          gtag("config", gaId, { anonymize_ip: true });
+          gtag("config", gaId);
         </script>
-        <script async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}></script>
       </Fragment>
     )}
 
