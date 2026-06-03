@@ -1,0 +1,81 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import LandingHero from "../components/LandingHero.astro";
+import RulerTool from "../components/RulerTool.astro";
+import PpiCalculator from "../components/PpiCalculator.astro";
+import Prose from "../components/Prose.astro";
+import SeoFaq from "../components/SeoFaq.astro";
+import Footer from "../components/Footer.astro";
+
+const title = "Online Inch Ruler — Actual Size Ruler in Inches (12 inch)";
+const description =
+  "Free online inch ruler at actual size. An accurate 12 inch online ruler with 1/16-inch precision — calibrate to your screen for true online ruler inches actual size.";
+const canonical = "https://aceonlineruler.com/inch-ruler/";
+const keywords =
+  "online ruler inches, online ruler inches actual size, 12 inch online ruler, online ruler 12 inch, inch ruler online, online ruler to scale, online ruler actual size, accurate online ruler";
+
+const faqs = [
+  {
+    q: "How big is a 12 inch online ruler on screen?",
+    a: "After calibration, a 12 inch online ruler measures exactly one real foot across your display — provided the full length fits on your screen. On smaller screens, use fullscreen or scroll, and the inch marks stay true to actual size.",
+  },
+  {
+    q: "Is the online inch ruler actual size?",
+    a: "Yes. Once you calibrate the ruler to your screen, every inch shown equals a real inch. The credit-card calibration method is the most accurate because every bank card is exactly 85.6 mm wide.",
+  },
+  {
+    q: "How do I read fractions of an inch?",
+    a: "The longest mark is a whole inch, the next-longest is 1/2 inch, then 1/4, 1/8 and the shortest marks are 1/16 inch. Line your object up with 0 and read the value at its far end.",
+  },
+  {
+    q: "How to identify 1 inch?",
+    a: "One inch is the gap between two large numbered marks on the inch scale. After calibrating, that distance equals a real inch — roughly 2.54 centimeters, or a little wider than a US quarter.",
+  },
+  {
+    q: "Can I switch between inches and centimeters?",
+    a: "Yes. Use the unit toggle to switch instantly between inches and cm/mm. Your screen calibration stays the same, so both scales remain accurate.",
+  },
+  {
+    q: "Can I use my phone as an inch ruler?",
+    a: "Yes. Open this page on your phone, calibrate the screen once, and you have an accurate inch ruler in your pocket — no app required.",
+  },
+];
+---
+
+<Layout title={title} description={description} canonical={canonical} keywords={keywords}>
+  <Header />
+  <main>
+    <LandingHero
+      eyebrow="Inches · 1/16 precision · Actual size"
+      title="Online ruler in"
+      highlight="inches."
+      lead="Measure in inches right on your screen with crisp 1/16-inch graduations. Calibrate once for a true actual-size scale."
+    />
+    <RulerTool defaultUnit="inch" />
+    <PpiCalculator />
+
+    <Prose eyebrow="Guide" title="Using the inch ruler" id="how">
+      <p>
+        The imperial ruler numbers each <strong>inch</strong> and divides it into sixteenths. The longest
+        ticks mark whole inches, with progressively shorter marks at 1/2, 1/4, 1/8 and 1/16 inch so
+        fractional readings are easy to find. Hold an object against an active edge for actual size,
+        or drag to measure a free distance. With calibration, it works as a true
+        <strong>online ruler inches actual size</strong> and a full <strong>12 inch online ruler</strong>.
+      </p>
+      <h3>Reading fractions of an inch</h3>
+      <ul>
+        <li>Longest mark — whole inch.</li>
+        <li>Next longest — 1/2 inch.</li>
+        <li>Medium — 1/4 inch.</li>
+        <li>Short — 1/8 inch.</li>
+        <li>Shortest — 1/16 inch.</li>
+      </ul>
+      <h3>Prefer metric?</h3>
+      <p>Try the <a href="/cm-ruler/">centimeter ruler</a> or <a href="/mm-ruler/">millimeter ruler</a>, or just flip the unit toggle.</p>
+    </Prose>
+
+    <SeoFaq faqs={faqs} title="Online inch ruler — FAQ" />
+  </main>
+  <Footer />
+</Layout>

@@ -1,0 +1,67 @@
+---
+export interface Props {
+  eyebrow: string;
+  title: string;
+  highlight: string;
+  lead: string;
+}
+const { eyebrow, title, highlight, lead } = Astro.props;
+---
+
+<section class="lhero">
+  <div class="lhero-mesh mesh-backdrop" aria-hidden="true"></div>
+  <div class="container-page lhero-inner">
+    <p class="eyebrow lhero-eyebrow">{eyebrow}</p>
+    <h1 class="display-xl lhero-title">{title} <span class="mesh-text">{highlight}</span></h1>
+    <p class="lhero-lead">{lead}</p>
+    <div class="lhero-cta">
+      <a href="#tool" class="btn-primary">Open the ruler</a>
+      <a href="/calibrate/" class="btn-secondary">Calibrate</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .lhero {
+    position: relative;
+    overflow: hidden;
+    padding-block: 72px 32px;
+  }
+  .lhero-mesh {
+    position: absolute;
+    inset: -25% -10% auto -10%;
+    height: 420px;
+    z-index: 0;
+    opacity: 0.85;
+    pointer-events: none;
+  }
+  .lhero-inner {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .lhero-eyebrow {
+    color: var(--color-body);
+    margin-bottom: 16px;
+  }
+  .lhero-title {
+    margin: 0;
+    max-width: 18ch;
+  }
+  .lhero-lead {
+    margin: 18px 0 0;
+    max-width: 58ch;
+    color: var(--color-body);
+    font: 400 18px / 28px var(--font-sans);
+  }
+  .lhero-cta {
+    margin-top: 26px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+</style>

@@ -1,0 +1,68 @@
+---
+import { t } from "../i18n/server";
+const items = [1, 2, 3, 4, 5, 6];
+---
+
+<section id="faq" class="section section-soft">
+  <div class="container-page">
+    <p class="eyebrow" data-i18n="faq.eyebrow">{t("faq.eyebrow")}</p>
+    <h2 class="display-lg section-title" data-i18n="faq.title">{t("faq.title")}</h2>
+    <div class="faq-list">
+      {items.map((n) => (
+        <details class="faq-item">
+          <summary><span data-i18n={`faq.q${n}`}>{t(`faq.q${n}`)}</span></summary>
+          <p data-i18n={`faq.a${n}`}>{t(`faq.a${n}`)}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .section {
+    padding-block: 64px;
+  }
+  .section-soft {
+    background: var(--color-canvas-soft-2);
+  }
+  .section-title {
+    margin: 8px 0 32px;
+  }
+  .faq-list {
+    display: grid;
+    gap: 0;
+    max-width: 760px;
+    border-top: 1px solid var(--color-hairline);
+  }
+  .faq-item {
+    border-bottom: 1px solid var(--color-hairline);
+  }
+  .faq-item summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 18px 0;
+    font: 500 16px var(--font-sans);
+    color: var(--color-ink);
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+  .faq-item summary::after {
+    content: "+";
+    color: var(--color-mute);
+    font-size: 20px;
+    line-height: 1;
+  }
+  .faq-item[open] summary::after {
+    content: "–";
+  }
+  .faq-item p {
+    margin: 0 0 18px;
+    max-width: 70ch;
+    color: var(--color-body);
+    font: 400 15px / 23px var(--font-sans);
+  }
+</style>

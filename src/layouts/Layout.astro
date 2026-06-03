@@ -1,23 +1,156 @@
+---
+import "../styles/global.css";
+import CookieConsent from "../components/CookieConsent.astro";
+import { SITE } from "../config";
+
+export interface Props {
+  title?: string;
+  description?: string;
+  canonical?: string;
+  keywords?: string;
+  ogImage?: string;
+  ogType?: string;
+  noindex?: boolean;
+}
+
+const {
+  title = `Online Ruler — Actual Size Ruler in cm, mm & inches | ${SITE.name}`,
+  description = "Free online ruler that shows actual size in inches, cm and mm. Calibrate to your screen for an accurate, to-scale 12 inch ruler tool that works on any device.",
+  canonical = `${SITE.url}/`,
+  keywords = "online ruler, online ruler inches, online ruler in cm, online ruler mm, online ruler cm, free online ruler, online ruler in mm, online ruler camera, mm online ruler, accurate online ruler, 12 inch online ruler, online ruler inches actual size, online ruler to scale, online ruler 12 inch, online ruler tool, online ruler actual size, ace online ruler, actual size online ruler",
+  ogImage = `${SITE.url}/og-image.png`,
+  ogType = "website",
+  noindex = false,
+} = Astro.props;
+
+const adsenseId = SITE.adsensePublisherId.trim();
+const gaId = SITE.gaMeasurementId.trim();
+const robots = noindex
+  ? "noindex, follow"
+  : "index, follow, max-image-preview:large, max-snippet:-1";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: SITE.name,
+  url: `${SITE.url}/`,
+  applicationCategory: "UtilitiesApplication",
+  operatingSystem: "Any",
+  browserRequirements: "Requires JavaScript. Works in any modern browser.",
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+  description,
+  featureList: [
+    "Actual size ruler in inches, cm and mm",
+    "Screen calibration for accurate to-scale measurement",
+    "12 inch online ruler",
+    "Auto device detection, screen diagonal and credit-card calibration",
+  ],
+};
+---
+
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
-	</head>
-	<body>
-		<slot />
-	</body>
-</html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#171717" />
+    <link rel="manifest" href="/manifest.webmanifest" />
 
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
-</style>
+    <!-- Pre-paint theme to avoid flash of incorrect theme -->
+    <script is:inline>
+      (function () {
+        try {
+          var stored = localStorage.getItem("ror.theme.v1");
+          var dark =
+            stored === "dark" ||
+            (!stored && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+          document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
+        } catch (e) {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script>
+
+    {gaId && (
+      <Fragment>
+        <!-- Google tag (gtag.js) with Consent Mode v2 -->
+        <script is:inline define:vars={{ gaId }}>
+          window.dataLayer = window.dataLayer || [];
+          function gtag() { dataLayer.push(arguments); }
+          window.gtag = window.gtag || gtag;
+
+          // Default: deny storage until the visitor consents (GDPR-safe).
+          // The cookie banner flips analytics_storage to "granted" on accept;
+          // until then GA runs in cookieless, privacy-preserving mode.
+          var prior = null;
+          try { prior = localStorage.getItem("ror.consent.v1"); } catch (e) {}
+          gtag("consent", "default", {
+            ad_storage: "denied",
+            ad_user_data: "denied",
+            ad_personalization: "denied",
+            analytics_storage: prior === "granted" ? "granted" : "denied",
+            functionality_storage: "granted",
+            security_storage: "granted",
+            wait_for_update: 500,
+          });
+
+          gtag("js", new Date());
+          gtag("config", gaId, { anonymize_ip: true });
+        </script>
+        <script async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}></script>
+      </Fragment>
+    )}
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="keywords" content={keywords} />
+    <meta name="robots" content={robots} />
+    <meta name="author" content={SITE.name} />
+    <link rel="canonical" href={canonical} />
+
+    {adsenseId && <meta name="google-adsense-account" content={adsenseId} />}
+
+    <!-- Open Graph -->
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Ace Online Ruler — actual size online ruler in cm, mm and inches" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content="Ace Online Ruler — actual size online ruler" />
+
+    <!-- Fonts: Geist + Geist Mono (closest to Vercel's brand faces) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body>
+    <slot />
+    <CookieConsent />
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("/sw.js").catch(() => {});
+        });
+      }
+    </script>
+  </body>
+</html>

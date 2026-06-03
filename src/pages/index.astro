@@ -1,11 +1,25 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Hero from "../components/Hero.astro";
+import RulerTool from "../components/RulerTool.astro";
+import SeoContent from "../components/SeoContent.astro";
+import SeoFaq from "../components/SeoFaq.astro";
+import Footer from "../components/Footer.astro";
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const title = "Online Ruler — Actual Size Ruler in Inches, cm & mm | Free & Accurate";
+const description =
+  "Free online ruler that shows actual size in inches, cm and mm. Calibrate to your screen for an accurate, to-scale 12 inch online ruler tool that works on any device.";
+const canonical = "https://aceonlineruler.com/";
 ---
 
-<Layout>
-	<Welcome />
+<Layout title={title} description={description} canonical={canonical}>
+  <Header />
+  <main>
+    <Hero />
+    <RulerTool defaultUnit="cm" />
+    <SeoContent />
+    <SeoFaq />
+  </main>
+  <Footer />
 </Layout>

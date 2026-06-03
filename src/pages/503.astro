@@ -1,0 +1,17 @@
+---
+import Layout from "../layouts/Layout.astro";
+import ErrorPage from "../components/ErrorPage.astro";
+
+const title = "Service Unavailable (503) — Ace Online Ruler";
+const description = "The site is temporarily unavailable, likely for maintenance. Please check back shortly.";
+const canonical = "https://aceonlineruler.com/503/";
+---
+
+<Layout title={title} description={description} canonical={canonical} noindex={true}>
+  <ErrorPage
+    code="503"
+    heading="We're down for a quick tune-up."
+    message="The site is temporarily unavailable, likely for brief maintenance. Please check back in a few minutes."
+    showRetry={true}
+  />
+</Layout>

@@ -1,0 +1,19 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Visualizer from "../components/Visualizer.astro";
+import Footer from "../components/Footer.astro";
+
+const title = "Real Size Visualizer — See TV, Monitor & Object Sizes to Scale";
+const description =
+  "Enter a screen diagonal or any dimensions to see them at true physical size on your screen. Calibrate once and visualize how big a 55-inch TV or any object really is.";
+const canonical = "https://aceonlineruler.com/size-visualizer/";
+---
+
+<Layout title={title} description={description} canonical={canonical}>
+  <Header />
+  <main>
+    <Visualizer />
+  </main>
+  <Footer />
+</Layout>

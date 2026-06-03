@@ -1,0 +1,9 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": true,
+  "routes": [
+    { "src": "/403", "status": 403, "dest": "/403/index.html" },
+    { "src": "/500", "status": 500, "dest": "/500.html" },
+    { "src": "/503", "status": 503, "dest": "/503/index.html" }
+  ]
+}

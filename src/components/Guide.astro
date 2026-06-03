@@ -1,0 +1,57 @@
+---
+import { t } from "../i18n/server";
+const steps = ["guide.1", "guide.2", "guide.3"];
+const nums = ["01", "02", "03"];
+---
+
+<section id="how" class="section section-soft">
+  <div class="container-page">
+    <p class="eyebrow" data-i18n="guide.eyebrow">{t("guide.eyebrow")}</p>
+    <h2 class="display-lg section-title" data-i18n="guide.title">{t("guide.title")}</h2>
+    <div class="steps">
+      {steps.map((s, i) => (
+        <article class="step">
+          <span class="step-n mesh-text">{nums[i]}</span>
+          <h3 class="step-title" data-i18n={`${s}.title`}>{t(`${s}.title`)}</h3>
+          <p class="step-body" data-i18n={`${s}.body`}>{t(`${s}.body`)}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .section {
+    padding-block: 64px;
+  }
+  .section-soft {
+    background: var(--color-canvas-soft-2);
+  }
+  .section-title {
+    margin: 8px 0 32px;
+  }
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .step-n {
+    font: 600 32px var(--font-sans);
+    letter-spacing: -0.04em;
+  }
+  .step-title {
+    margin: 10px 0 6px;
+    font: 600 20px / 26px var(--font-sans);
+    letter-spacing: -0.02em;
+  }
+  .step-body {
+    margin: 0;
+    color: var(--color-body);
+    font: 400 15px / 23px var(--font-sans);
+  }
+  @media (max-width: 860px) {
+    .steps {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

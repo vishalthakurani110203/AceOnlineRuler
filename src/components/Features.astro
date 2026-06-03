@@ -1,0 +1,72 @@
+---
+import { t } from "../i18n/server";
+
+const features = [
+  { icon: "📐", key: "feat.1" },
+  { icon: "✏️", key: "feat.2" },
+  { icon: "💾", key: "feat.3" },
+  { icon: "🔄", key: "feat.4" },
+  { icon: "⤢", key: "feat.5" },
+  { icon: "🔒", key: "feat.6" },
+];
+---
+
+<section id="features" class="section">
+  <div class="container-page">
+    <p class="eyebrow" data-i18n="feat.eyebrow">{t("feat.eyebrow")}</p>
+    <h2 class="display-lg section-title" data-i18n="feat.title">{t("feat.title")}</h2>
+    <p class="section-lead" data-i18n="feat.lead">{t("feat.lead")}</p>
+
+    <div class="feat-grid">
+      {features.map((f) => (
+        <article class="card feat-card">
+          <span class="feat-icon" aria-hidden="true">{f.icon}</span>
+          <h3 class="feat-title" data-i18n={`${f.key}.title`}>{t(`${f.key}.title`)}</h3>
+          <p class="feat-body" data-i18n={`${f.key}.body`}>{t(`${f.key}.body`)}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .section {
+    padding-block: 64px;
+  }
+  .section-title {
+    margin: 8px 0 0;
+  }
+  .section-lead {
+    margin: 12px 0 32px;
+    max-width: 64ch;
+    color: var(--color-body);
+    font: 400 18px / 28px var(--font-sans);
+  }
+  .feat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .feat-card {
+    padding: 24px;
+  }
+  .feat-icon {
+    font-size: 24px;
+    line-height: 1;
+  }
+  .feat-title {
+    margin: 14px 0 6px;
+    font: 600 18px / 24px var(--font-sans);
+    letter-spacing: -0.02em;
+  }
+  .feat-body {
+    margin: 0;
+    color: var(--color-body);
+    font: 400 14px / 21px var(--font-sans);
+  }
+  @media (max-width: 860px) {
+    .feat-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

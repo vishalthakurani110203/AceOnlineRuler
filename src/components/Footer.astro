@@ -1,0 +1,136 @@
+---
+import { t } from "../i18n/server";
+const year = new Date().getFullYear();
+const cols = [
+  {
+    title: "footer.col.rulers",
+    items: [
+      { href: "/", key: "footer.link.open" },
+      { href: "/cm-ruler/", key: "footer.link.cm" },
+      { href: "/inch-ruler/", key: "footer.link.inch" },
+      { href: "/mm-ruler/", key: "footer.link.mm" },
+      { href: "/print/", key: "footer.link.print" },
+    ],
+  },
+  {
+    title: "footer.col.tools",
+    items: [
+      { href: "/calibrate/", key: "footer.link.calibrate" },
+      { href: "/ppi-calculator/", key: "footer.link.ppi" },
+      { href: "/converter/", key: "nav.convert" },
+      { href: "/size-visualizer/", key: "nav.visualizer" },
+      { href: "/compare-sizes/", key: "nav.compare" },
+      { href: "/features/", key: "footer.link.features" },
+    ],
+  },
+  {
+    title: "footer.col.learn",
+    items: [
+      { href: "/how-to-use/", key: "footer.link.how" },
+      { href: "/faq/", key: "footer.link.faq" },
+      { href: "/how-to-use/#accuracy", key: "footer.link.accuracy" },
+    ],
+  },
+  {
+    title: "footer.col.company",
+    items: [
+      { href: "/about/", key: "footer.link.about" },
+      { href: "/contact/", key: "footer.link.contact" },
+      { href: "/privacy/", key: "footer.link.privacy" },
+      { href: "/terms/", key: "footer.link.terms" },
+    ],
+  },
+];
+---
+
+<footer class="site-footer">
+  <div class="container-page footer-grid">
+    <div class="footer-brand">
+      <span class="brand-name">Ace Online Ruler</span>
+      <p class="footer-tag" data-i18n="footer.tag">{t("footer.tag")}</p>
+      <p class="footer-domain">aceonlineruler.com</p>
+    </div>
+    {cols.map((c) => (
+      <nav class="footer-col" aria-label={t(c.title)}>
+        <h3 class="footer-col-title" data-i18n={c.title}>{t(c.title)}</h3>
+        <ul>
+          {c.items.map((i) => (
+            <li><a href={i.href} data-i18n={i.key}>{t(i.key)}</a></li>
+          ))}
+        </ul>
+      </nav>
+    ))}
+  </div>
+  <div class="container-page footer-base">
+    <span>© {year} Ace Online Ruler. <span data-i18n="footer.rights">{t("footer.rights")}</span></span>
+    <span class="footer-note" data-i18n="footer.note">{t("footer.note")}</span>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--color-hairline);
+    background: var(--color-canvas);
+    padding-block: 64px 32px;
+    margin-top: 64px;
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr 1fr 1fr;
+    gap: 32px;
+  }
+  .footer-brand .brand-name {
+    font: 600 16px var(--font-sans);
+    letter-spacing: -0.02em;
+  }
+  .footer-tag {
+    margin: 10px 0 0;
+    max-width: 36ch;
+    color: var(--color-body);
+    font: 400 14px / 20px var(--font-sans);
+  }
+  .footer-domain {
+    margin: 12px 0 0;
+    font: 400 12px var(--font-mono);
+    color: var(--color-mute);
+  }
+  .footer-col-title {
+    margin: 0 0 12px;
+    font: 500 13px var(--font-sans);
+    color: var(--color-ink);
+  }
+  .footer-col ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+  }
+  .footer-col a {
+    font: 400 14px var(--font-sans);
+    color: var(--color-body);
+    text-decoration: none;
+  }
+  .footer-col a:hover {
+    color: var(--color-ink);
+  }
+  .footer-base {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--color-hairline);
+    font: 400 13px var(--font-sans);
+    color: var(--color-mute);
+  }
+  @media (max-width: 860px) {
+    .footer-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .footer-brand {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

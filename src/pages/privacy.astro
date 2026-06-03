@@ -1,0 +1,70 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Prose from "../components/Prose.astro";
+import Footer from "../components/Footer.astro";
+
+const title = "Privacy Policy — Ace Online Ruler";
+const description = "How Ace Online Ruler handles your data. Everything runs in your browser; we don't upload or sell your information.";
+const canonical = "https://aceonlineruler.com/privacy/";
+---
+
+<Layout title={title} description={description} canonical={canonical}>
+  <Header />
+  <main>
+    <Prose eyebrow="Legal" title="Privacy Policy">
+      <p><strong>Last updated:</strong> {new Date().getFullYear()}</p>
+      <p>
+        Ace Online Ruler is built to respect your privacy. The ruler and every tool on this site run
+        entirely in your browser. Nothing you measure is uploaded to a server, and we do not require an
+        account to use the tools.
+      </p>
+      <h3>What we store</h3>
+      <ul>
+        <li><strong>Calibration setting</strong> — your screen's pixels-per-inch value is saved in your browser's local storage so the ruler stays accurate on return visits. It never leaves your device.</li>
+        <li><strong>Preferences</strong> — your chosen language and light/dark theme are also stored locally for convenience.</li>
+        <li>We do not collect your name, email, or the things you measure.</li>
+      </ul>
+      <h3>Analytics &amp; cookies</h3>
+      <p>
+        The core tools work without cookies. If privacy-friendly, aggregate analytics are added in the
+        future, they will be limited to anonymous usage counts (such as page views) and disclosed here.
+        We do not sell or share personal data, because we do not collect it.
+      </p>
+      <h3>Advertising</h3>
+      <p>
+        This site may display ads served by Google, including through Google AdSense. When advertising is
+        active:
+      </p>
+      <ul>
+        <li>Third-party vendors, including Google, use cookies to serve ads based on a user's prior visits to this and other websites.</li>
+        <li>Google's use of advertising cookies enables it and its partners to serve ads to you based on your visit to this site and/or other sites on the internet.</li>
+        <li>You may opt out of personalized advertising by visiting <a href="https://www.google.com/settings/ads" rel="nofollow noopener" target="_blank">Google Ads Settings</a>. You can also opt out of some third-party vendors' use of cookies for personalized advertising at <a href="https://www.aboutads.info/choices/" rel="nofollow noopener" target="_blank">aboutads.info</a>.</li>
+        <li>We use a consent banner with Google Consent Mode so that, in regions where it is required, advertising and analytics cookies are only set after you accept. You can change your choice anytime by clearing this site's data.</li>
+      </ul>
+      <h3>Third-party services</h3>
+      <p>
+        We load web fonts from a third-party provider to render the site. Those requests are subject to
+        the provider's own policies. We do not embed advertising trackers in the measurement tools.
+      </p>
+      <h3>Your control</h3>
+      <p>
+        You can clear your saved calibration and preferences at any time by clearing your browser's site
+        data for this domain. Because data stays on your device, removing it is fully in your hands.
+      </p>
+      <h3>Children's privacy</h3>
+      <p>
+        The tools are general-purpose and do not knowingly collect any personal information from anyone,
+        including children.
+      </p>
+      <h3>Changes to this policy</h3>
+      <p>
+        We may update this policy as the site evolves. Material changes will be reflected here with an
+        updated date above.
+      </p>
+      <h3>Contact</h3>
+      <p>Questions about this policy? Reach us through our <a href="/contact/">Contact page</a>.</p>
+    </Prose>
+  </main>
+  <Footer />
+</Layout>

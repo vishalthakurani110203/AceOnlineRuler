@@ -1,0 +1,19 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Converter from "../components/Converter.astro";
+import Footer from "../components/Footer.astro";
+
+const title = "Length Unit Converter — mm, cm, m, inch, ft, pt & px";
+const description =
+  "Free length converter for millimeters, centimeters, meters, inches, feet, points and screen pixels. Pixel conversions use your calibrated screen density for true accuracy.";
+const canonical = "https://aceonlineruler.com/converter/";
+---
+
+<Layout title={title} description={description} canonical={canonical}>
+  <Header />
+  <main>
+    <Converter />
+  </main>
+  <Footer />
+</Layout>

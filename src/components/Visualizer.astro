@@ -1,0 +1,310 @@
+---
+import { t } from "../i18n/server";
+---
+
+<section id="visualizer" class="vis section">
+  <div class="container-page">
+    <p class="eyebrow" data-i18n="vis.eyebrow">{t("vis.eyebrow")}</p>
+    <h2 class="display-lg section-title" data-i18n="vis.title">{t("vis.title")}</h2>
+    <p class="section-lead" data-i18n="vis.lead">{t("vis.lead")}</p>
+
+    <div class="vis-controls card-soft">
+      <div class="seg" role="tablist" aria-label="Visualizer mode">
+        <button class="seg-btn is-active" data-vmode="screen" role="tab" aria-selected="true" data-i18n="vis.mode.screen">{t("vis.mode.screen")}</button>
+        <button class="seg-btn" data-vmode="custom" role="tab" aria-selected="false" data-i18n="vis.mode.custom">{t("vis.mode.custom")}</button>
+      </div>
+
+      <div id="vis-screen" class="vis-inputs">
+        <label class="vis-field">
+          <span data-i18n="vis.diagonal">{t("vis.diagonal")}</span>
+          <span class="vis-inline"><input id="vis-diag" type="number" inputmode="decimal" step="any" value="55" /> in</span>
+        </label>
+        <label class="vis-field">
+          <span data-i18n="vis.ratio">{t("vis.ratio")}</span>
+          <select id="vis-ratio" class="vis-select">
+            <option value="16:9" selected>16:9</option>
+            <option value="16:10">16:10</option>
+            <option value="21:9">21:9</option>
+            <option value="4:3">4:3</option>
+            <option value="3:2">3:2</option>
+            <option value="1:1">1:1</option>
+            <option value="19.5:9">19.5:9 (phone)</option>
+          </select>
+        </label>
+      </div>
+
+      <div id="vis-custom" class="vis-inputs" hidden>
+        <label class="vis-field">
+          <span data-i18n="vis.width">{t("vis.width")}</span>
+          <span class="vis-inline"><input id="vis-w" type="number" inputmode="decimal" step="any" value="20" /> cm</span>
+        </label>
+        <label class="vis-field">
+          <span data-i18n="vis.height">{t("vis.height")}</span>
+          <span class="vis-inline"><input id="vis-h" type="number" inputmode="decimal" step="any" value="15" /> cm</span>
+        </label>
+      </div>
+
+      <button id="vis-fs" class="btn-secondary btn-sm vis-fs" type="button"><span aria-hidden="true">⤢</span> <span data-i18n="tool.fullscreen">{t("tool.fullscreen")}</span></button>
+    </div>
+
+    <div id="vis-stage" class="vis-stage">
+      <div id="vis-shape" class="vis-shape"><span id="vis-label" class="vis-shape-label"></span></div>
+    </div>
+    <p id="vis-status" class="vis-status" aria-live="polite"></p>
+  </div>
+</section>
+
+<script>
+  import { loadCalibration, IN_PER_CM } from "../scripts/calibration.ts";
+
+  const stage = document.getElementById("vis-stage")!;
+  const shape = document.getElementById("vis-shape")!;
+  const label = document.getElementById("vis-label")!;
+  const status = document.getElementById("vis-status");
+  const diag = document.getElementById("vis-diag") as HTMLInputElement;
+  const ratioSel = document.getElementById("vis-ratio") as HTMLSelectElement;
+  const wIn = document.getElementById("vis-w") as HTMLInputElement;
+  const hIn = document.getElementById("vis-h") as HTMLInputElement;
+  let mode: "screen" | "custom" = "screen";
+
+  function trc(key: string, fallback: string): string {
+    const fn = (window as Window & { __t?: (k: string) => string | undefined }).__t;
+    return (fn && fn(key)) || fallback;
+  }
+
+  // returns desired physical size in inches {w,h}
+  function targetInches(): { w: number; h: number; caption: string } | null {
+    if (mode === "screen") {
+      const d = parseFloat(diag.value);
+      const [rw, rh] = ratioSel.value.split(":").map(Number);
+      if (!isFinite(d) || d <= 0 || !rw || !rh) return null;
+      const diagRatio = Math.sqrt(rw * rw + rh * rh);
+      const w = (d * rw) / diagRatio;
+      const h = (d * rh) / diagRatio;
+      return { w, h, caption: `${d}" · ${ratioSel.value}` };
+    } else {
+      const w = parseFloat(wIn.value);
+      const h = parseFloat(hIn.value);
+      if (!isFinite(w) || !isFinite(h) || w <= 0 || h <= 0) return null;
+      return { w: w * IN_PER_CM, h: h * IN_PER_CM, caption: `${w} × ${h} cm` };
+    }
+  }
+
+  function render() {
+    const tgt = targetInches();
+    if (!tgt) {
+      shape.style.display = "none";
+      if (status) status.textContent = "";
+      return;
+    }
+    shape.style.display = "grid";
+    const ppi = loadCalibration().pxPerInch;
+    const fullW = tgt.w * ppi;
+    const fullH = tgt.h * ppi;
+
+    // fit within the stage if needed
+    const avail = stage.getBoundingClientRect();
+    const maxW = avail.width - 24;
+    const maxH = avail.height - 24;
+    const scale = Math.min(1, maxW / fullW, maxH / fullH);
+    const w = fullW * scale;
+    const h = fullH * scale;
+
+    shape.style.width = `${w}px`;
+    shape.style.height = `${h}px`;
+    label.textContent = tgt.caption;
+
+    if (status) {
+      if (scale >= 0.999) status.textContent = trc("vis.fits", "Shown at true actual size.");
+      else {
+        const pct = Math.round(scale * 100);
+        status.textContent = trc("vis.scaled", "Scaled to fit your screen ({pct}% of actual size).").replace("{pct}", String(pct));
+      }
+    }
+  }
+
+  document.querySelectorAll<HTMLButtonElement>("[data-vmode]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll<HTMLButtonElement>("[data-vmode]").forEach((b) => {
+        b.classList.toggle("is-active", b === btn);
+        b.setAttribute("aria-selected", b === btn ? "true" : "false");
+      });
+      mode = btn.dataset.vmode as "screen" | "custom";
+      document.getElementById("vis-screen")!.hidden = mode !== "screen";
+      document.getElementById("vis-custom")!.hidden = mode !== "custom";
+      render();
+    });
+  });
+
+  [diag, ratioSel, wIn, hIn].forEach((el) => {
+    el.addEventListener("input", render);
+    el.addEventListener("change", render);
+  });
+  window.addEventListener("resize", render);
+  window.addEventListener("ror:calibration", render);
+  document.addEventListener("fullscreenchange", () => setTimeout(render, 60));
+  document.getElementById("vis-fs")?.addEventListener("click", () => {
+    if (!document.fullscreenElement) stage.requestFullscreen?.().catch(() => {});
+    else document.exitFullscreen?.();
+  });
+  render();
+</script>
+
+<style>
+  .section {
+    padding-block: 56px;
+  }
+  .section-title {
+    margin: 8px 0 0;
+  }
+  .section-lead {
+    margin: 12px 0 24px;
+    max-width: 64ch;
+    color: var(--color-body);
+    font: 400 18px / 28px var(--font-sans);
+  }
+  .vis-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 16px 24px;
+    padding: 16px 20px;
+    background: var(--color-canvas);
+  }
+  .seg {
+    display: inline-flex;
+    background: var(--color-canvas-soft-2);
+    border-radius: var(--radius-pill);
+    padding: 3px;
+  }
+  .seg-btn {
+    border: 0;
+    background: transparent;
+    color: var(--color-body);
+    font: 500 14px var(--font-sans);
+    padding: 6px 14px;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+  }
+  .seg-btn.is-active {
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    box-shadow: var(--shadow-subtle);
+  }
+  .vis-inputs {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .vis-inputs[hidden] {
+    display: none;
+  }
+  .vis-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font: 500 13px var(--font-sans);
+    color: var(--color-body);
+  }
+  .vis-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font: 400 14px var(--font-sans);
+    color: var(--color-mute);
+  }
+  .vis-field input,
+  .vis-select {
+    height: 40px;
+    width: 110px;
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-sm);
+    padding: 0 12px;
+    font: 400 15px var(--font-sans);
+    background: var(--color-canvas);
+    color: var(--color-ink);
+  }
+  .vis-select {
+    width: auto;
+    min-width: 130px;
+    cursor: pointer;
+  }
+  .vis-field input:focus-visible,
+  .vis-select:focus-visible {
+    outline: 2px solid var(--color-link);
+    outline-offset: 1px;
+    border-color: var(--color-link);
+  }
+  .vis-fs {
+    margin-left: auto;
+  }
+  .vis-stage {
+    position: relative;
+    margin-top: 16px;
+    height: min(70vh, 600px);
+    display: grid;
+    place-items: center;
+    padding: 12px;
+    background:
+      linear-gradient(var(--color-hairline) 1px, transparent 1px) 0 0 / 100% 24px,
+      linear-gradient(90deg, var(--color-hairline) 1px, transparent 1px) 0 0 / 24px 100%,
+      var(--color-canvas);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+    overflow: hidden;
+  }
+  .vis-stage:fullscreen {
+    height: 100vh;
+    border-radius: 0;
+  }
+  .vis-shape {
+    display: grid;
+    place-items: center;
+    border: 2px solid var(--color-link);
+    border-radius: 6px;
+    background:
+      repeating-linear-gradient(
+        45deg,
+        rgba(0, 112, 243, 0.05),
+        rgba(0, 112, 243, 0.05) 10px,
+        rgba(0, 112, 243, 0.1) 10px,
+        rgba(0, 112, 243, 0.1) 20px
+      );
+    max-width: 100%;
+    max-height: 100%;
+  }
+  .vis-shape-label {
+    font: 600 14px var(--font-mono);
+    color: var(--color-link-deep);
+    background: var(--color-canvas);
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-hairline);
+  }
+  .vis-status {
+    margin: 14px 0 0;
+    font: 500 14px var(--font-sans);
+    color: var(--color-body);
+  }
+  @media (max-width: 640px) {
+    .section {
+      padding-block: 40px;
+    }
+    .vis-fs {
+      margin-left: 0;
+      width: 100%;
+      justify-content: center;
+    }
+    .vis-inputs {
+      width: 100%;
+    }
+    .vis-field {
+      flex: 1 1 40%;
+    }
+    .vis-field input {
+      width: 100%;
+    }
+    .vis-stage {
+      height: min(60vh, 460px);
+    }
+  }</style>

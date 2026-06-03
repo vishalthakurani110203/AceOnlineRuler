@@ -1,0 +1,16 @@
+---
+import Layout from "../layouts/Layout.astro";
+import ErrorPage from "../components/ErrorPage.astro";
+
+const title = "Page Not Found (404) — Ace Online Ruler";
+const description = "Sorry, that page doesn't exist. Head back to the online ruler or explore our measurement tools.";
+const canonical = "https://aceonlineruler.com/404/";
+---
+
+<Layout title={title} description={description} canonical={canonical} noindex={true}>
+  <ErrorPage
+    code="404"
+    heading="This page wandered off the ruler."
+    message="The page you're looking for doesn't exist or may have moved. Let's get you back to measuring."
+  />
+</Layout>

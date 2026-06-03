@@ -1,0 +1,156 @@
+---
+// Fancy animated dark-mode toggle (sun ↔ moon morph).
+---
+
+<button
+  type="button"
+  class="theme-toggle"
+  data-theme-toggle
+  aria-label="Switch to dark mode"
+  aria-pressed="false"
+  title="Toggle dark mode"
+>
+  <span class="tt-track" aria-hidden="true">
+    <span class="tt-thumb">
+      <svg class="tt-icon tt-sun" width="15" height="15" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="4.2" fill="currentColor" />
+        <g stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+          <path d="M12 2.4v2.6M12 19v2.6M4.6 4.6l1.9 1.9M17.5 17.5l1.9 1.9M2.4 12h2.6M19 12h2.6M4.6 19.4l1.9-1.9M17.5 6.5l1.9-1.9" />
+        </g>
+      </svg>
+      <svg class="tt-icon tt-moon" width="15" height="15" viewBox="0 0 24 24" fill="none">
+        <path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" fill="currentColor" />
+      </svg>
+    </span>
+    <span class="tt-stars" aria-hidden="true">
+      <i></i><i></i><i></i>
+    </span>
+  </span>
+</button>
+
+<style>
+  .theme-toggle {
+    --w: 52px;
+    --h: 28px;
+    display: inline-flex;
+    align-items: center;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    border-radius: var(--radius-pill);
+  }
+  .theme-toggle:focus-visible {
+    outline: 2px solid var(--color-link);
+    outline-offset: 2px;
+  }
+
+  .tt-track {
+    position: relative;
+    width: var(--w);
+    height: var(--h);
+    border-radius: var(--radius-pill);
+    background: linear-gradient(135deg, #cfe6ff, #8ec5ff);
+    box-shadow: var(--shadow-hairline);
+    overflow: hidden;
+    transition: background 0.4s ease;
+  }
+  .theme-toggle.is-dark .tt-track {
+    background: linear-gradient(135deg, #1b2440, #070912);
+  }
+
+  .tt-thumb {
+    position: absolute;
+    top: 50%;
+    left: 3px;
+    width: 22px;
+    height: 22px;
+    transform: translate(0, -50%);
+    border-radius: 50%;
+    background: #fff;
+    display: grid;
+    place-items: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.4s ease;
+  }
+  .theme-toggle.is-dark .tt-thumb {
+    transform: translate(calc(var(--w) - 28px), -50%);
+    background: #f5f3ff;
+  }
+
+  .tt-icon {
+    position: absolute;
+    transition: opacity 0.3s ease, transform 0.4s ease;
+  }
+  .tt-sun {
+    color: #f5a623;
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+  .tt-moon {
+    color: #4c2889;
+    opacity: 0;
+    transform: rotate(-60deg) scale(0.5);
+  }
+  .theme-toggle.is-dark .tt-sun {
+    opacity: 0;
+    transform: rotate(60deg) scale(0.5);
+  }
+  .theme-toggle.is-dark .tt-moon {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+
+  /* twinkling stars revealed in dark mode */
+  .tt-stars {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.5s ease 0.1s;
+  }
+  .theme-toggle.is-dark .tt-stars {
+    opacity: 1;
+  }
+  .tt-stars i {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: #fff;
+    animation: tt-twinkle 2.4s ease-in-out infinite;
+  }
+  .tt-stars i:nth-child(1) {
+    top: 6px;
+    left: 9px;
+    animation-delay: 0s;
+  }
+  .tt-stars i:nth-child(2) {
+    top: 14px;
+    left: 16px;
+    width: 1.5px;
+    height: 1.5px;
+    animation-delay: 0.6s;
+  }
+  .tt-stars i:nth-child(3) {
+    top: 8px;
+    left: 21px;
+    animation-delay: 1.2s;
+  }
+
+  @keyframes tt-twinkle {
+    0%, 100% { opacity: 0.25; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.2); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tt-thumb,
+    .tt-icon,
+    .tt-track,
+    .tt-stars {
+      transition: none;
+    }
+    .tt-stars i {
+      animation: none;
+    }
+  }
+</style>

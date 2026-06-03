@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none">
+  <rect width="1200" height="630" fill="#ffffff"/>
+  <!-- mesh atmosphere -->
+  <defs>
+    <radialGradient id="g1" cx="18%" cy="20%" r="60%">
+      <stop offset="0%" stop-color="#007cf0" stop-opacity="0.22"/>
+      <stop offset="70%" stop-color="#007cf0" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="g2" cx="82%" cy="12%" r="55%">
+      <stop offset="0%" stop-color="#7928ca" stop-opacity="0.2"/>
+      <stop offset="70%" stop-color="#7928ca" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="g3" cx="72%" cy="88%" r="60%">
+      <stop offset="0%" stop-color="#ff0080" stop-opacity="0.16"/>
+      <stop offset="70%" stop-color="#ff0080" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="g4" cx="22%" cy="90%" r="55%">
+      <stop offset="0%" stop-color="#f9cb28" stop-opacity="0.18"/>
+      <stop offset="70%" stop-color="#f9cb28" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#007cf0"/>
+      <stop offset="50%" stop-color="#ff0080"/>
+      <stop offset="100%" stop-color="#f9cb28"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#g1)"/>
+  <rect width="1200" height="630" fill="url(#g2)"/>
+  <rect width="1200" height="630" fill="url(#g3)"/>
+  <rect width="1200" height="630" fill="url(#g4)"/>
+
+  <!-- brand row -->
+  <g transform="translate(90, 96)">
+    <rect x="0" y="2" width="44" height="26" rx="5" fill="none" stroke="#171717" stroke-width="3"/>
+    <g stroke="#171717" stroke-width="2.6" stroke-linecap="round">
+      <path d="M9 2v8M18 2v6M27 2v8M36 2v6"/>
+    </g>
+    <text x="62" y="24" font-family="Geist, Inter, system-ui, sans-serif" font-size="26" font-weight="600" fill="#171717">Ace Online Ruler</text>
+  </g>
+
+  <!-- headline -->
+  <text x="90" y="300" font-family="Geist, Inter, system-ui, sans-serif" font-size="86" font-weight="600" letter-spacing="-3" fill="#171717">Online Ruler</text>
+  <text x="92" y="392" font-family="Geist, Inter, system-ui, sans-serif" font-size="62" font-weight="600" letter-spacing="-2" fill="url(#accent)">Actual size. Real accuracy.</text>
+
+  <!-- subhead -->
+  <text x="92" y="452" font-family="Geist, Inter, system-ui, sans-serif" font-size="30" font-weight="400" fill="#4d4d4d">Measure in inches, cm &amp; mm — calibrated to your screen.</text>
+
+  <!-- ruler strip -->
+  <g transform="translate(90, 506)">
+    <rect x="0" y="0" width="1020" height="64" rx="10" fill="#ffffff" stroke="#ebebeb" stroke-width="2"/>
+    <g stroke="#171717" stroke-width="2" stroke-linecap="round">
+      <path d="M30 0v40M90 0v22M150 0v22M210 0v22M270 0v22M330 0v40M390 0v22M450 0v22M510 0v22M570 0v22M630 0v40M690 0v22M750 0v22M810 0v22M870 0v22M930 0v40M990 0v22"/>
+    </g>
+    <g font-family="Geist Mono, monospace" font-size="15" fill="#171717">
+      <text x="36" y="58">1</text>
+      <text x="336" y="58">2</text>
+      <text x="636" y="58">3</text>
+      <text x="936" y="58">4</text>
+    </g>
+  </g>
+</svg>

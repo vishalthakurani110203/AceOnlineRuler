@@ -1,0 +1,19 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Compare from "../components/Compare.astro";
+import Footer from "../components/Footer.astro";
+
+const title = "Compare Sizes — Two Objects Side by Side at True Scale";
+const description =
+  "Compare two real-world objects at actual size on your calibrated screen. See how a credit card, coin, A4 sheet, phone and more stack up against each other.";
+const canonical = "https://aceonlineruler.com/compare-sizes/";
+---
+
+<Layout title={title} description={description} canonical={canonical}>
+  <Header />
+  <main>
+    <Compare />
+  </main>
+  <Footer />
+</Layout>

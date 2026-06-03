@@ -1,0 +1,11 @@
+# Cloudflare Workers — static site deployment (assets-only Worker).
+# The site is fully static, so Workers just serves the files in ./dist.
+name = "ace-online-ruler"
+compatibility_date = "2025-06-01"
+
+[assets]
+directory = "./dist"
+# Serve our custom 404 page for unknown routes.
+not_found_handling = "404-page"
+# Redirect /path -> /path/ so trailing-slash URLs (our canonicals) resolve.
+html_handling = "auto-trailing-slash"

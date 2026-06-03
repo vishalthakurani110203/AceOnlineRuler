@@ -1,0 +1,78 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import LandingHero from "../components/LandingHero.astro";
+import RulerTool from "../components/RulerTool.astro";
+import PpiCalculator from "../components/PpiCalculator.astro";
+import Prose from "../components/Prose.astro";
+import SeoFaq from "../components/SeoFaq.astro";
+import Footer from "../components/Footer.astro";
+
+const title = "Online MM Ruler — Actual Size Millimeter Ruler";
+const description =
+  "Free mm online ruler at actual size. Measure small parts in millimeters with precise 1 mm graduations — calibrate your screen for an accurate online ruler in mm.";
+const canonical = "https://aceonlineruler.com/mm-ruler/";
+const keywords =
+  "online ruler mm, online ruler in mm, mm online ruler, millimeter ruler online, online ruler actual size, accurate online ruler, online ruler to scale, free online ruler";
+
+const faqs = [
+  {
+    q: "How accurate is the millimeter ruler?",
+    a: "After calibration, the mm online ruler is accurate to within a fraction of a millimeter on most screens. The credit-card method gives the tightest accuracy for small parts.",
+  },
+  {
+    q: "Is the mm ruler good for measuring small objects?",
+    a: "Yes. With 1 mm graduations and a taller mark every 5 mm, plus actual-size object overlays, it is well suited to small parts, screws, beads and jewelry.",
+  },
+  {
+    q: "Is the online ruler in mm actual size?",
+    a: "Yes. Once your screen is calibrated, each millimeter on the ruler equals one real millimeter. Keep browser zoom at 100% and re-calibrate if you switch screens.",
+  },
+  {
+    q: "How do I read millimeters on the ruler?",
+    a: "Each numbered centimeter mark is split into 10 equal millimeter ticks. Line your object up at 0 and count the small ticks to the far end; the taller mark at 5 mm helps you read quickly.",
+  },
+  {
+    q: "Can I use my phone as a mm ruler?",
+    a: "Yes. Open this page on your phone, calibrate the screen once, and you have an accurate millimeter ruler for small measurements anywhere — no app required.",
+  },
+  {
+    q: "How many mm are in a cm and an inch?",
+    a: "There are 10 millimeters in a centimeter and 25.4 millimeters in an inch. Use the unit toggle or the converter to switch the same calibrated scale between mm, cm and inches.",
+  },
+];
+---
+
+<Layout title={title} description={description} canonical={canonical} keywords={keywords}>
+  <Header />
+  <main>
+    <LandingHero
+      eyebrow="Millimeters · 1 mm marks · Actual size"
+      title="Online ruler in"
+      highlight="millimeters."
+      lead="Measure small parts in millimeters with precise 1 mm graduations. Calibrate once for a true actual-size scale on any screen."
+    />
+    <RulerTool defaultUnit="cm" />
+    <PpiCalculator />
+
+    <Prose eyebrow="Guide" title="Using the millimeter ruler" id="how">
+      <p>
+        The millimeter scale lives on the metric (cm) ruler: every centimeter is split into ten
+        <strong>1&nbsp;mm</strong> ticks, with a taller mark at each 5&nbsp;mm to speed up reading. For the smallest
+        parts, turn on an actual-size overlay (credit card or coin) to sanity-check your calibration first.
+        Calibrated, it is an accurate <strong>online ruler in mm</strong> for precise work.
+      </p>
+      <h3>Tips for small measurements</h3>
+      <ul>
+        <li>Calibrate with the <strong>credit-card</strong> method for the tightest accuracy.</li>
+        <li>Keep browser zoom at 100%.</li>
+        <li>Use the drag-to-measure tool for gaps you can't line up against an edge.</li>
+      </ul>
+      <h3>Need larger units?</h3>
+      <p>See the <a href="/cm-ruler/">centimeter ruler</a> or the <a href="/inch-ruler/">inch ruler</a>.</p>
+    </Prose>
+
+    <SeoFaq faqs={faqs} title="Online mm ruler — FAQ" />
+  </main>
+  <Footer />
+</Layout>

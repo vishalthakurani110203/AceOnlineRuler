@@ -1,0 +1,231 @@
+---
+import { t } from "../i18n/server";
+import { OBJECTS } from "../scripts/devices";
+---
+
+<section id="compare" class="cmp section">
+  <div class="container-page">
+    <p class="eyebrow" data-i18n="cmp.eyebrow">{t("cmp.eyebrow")}</p>
+    <h2 class="display-lg section-title" data-i18n="cmp.title">{t("cmp.title")}</h2>
+    <p class="section-lead" data-i18n="cmp.lead">{t("cmp.lead")}</p>
+
+    <div class="cmp-controls card-soft">
+      <label class="cmp-field">
+        <span class="cmp-dot a" aria-hidden="true"></span>
+        <span data-i18n="cmp.objectA">{t("cmp.objectA")}</span>
+        <select id="cmp-a" class="cmp-select">
+          {OBJECTS.map((o) => <option value={o.id}>{o.name}</option>)}
+        </select>
+      </label>
+      <label class="cmp-field">
+        <span class="cmp-dot b" aria-hidden="true"></span>
+        <span data-i18n="cmp.objectB">{t("cmp.objectB")}</span>
+        <select id="cmp-b" class="cmp-select">
+          {OBJECTS.map((o) => <option value={o.id}>{o.name}</option>)}
+        </select>
+      </label>
+    </div>
+
+    <div id="cmp-stage" class="cmp-stage">
+      <canvas id="cmp-canvas"></canvas>
+    </div>
+    <p id="cmp-status" class="cmp-status" aria-live="polite"></p>
+  </div>
+</section>
+
+<script>
+  import { OBJECTS } from "../scripts/devices.ts";
+  import { loadCalibration, IN_PER_CM } from "../scripts/calibration.ts";
+
+  const stage = document.getElementById("cmp-stage") as HTMLDivElement;
+  const canvas = document.getElementById("cmp-canvas") as HTMLCanvasElement;
+  const ctx = canvas.getContext("2d")!;
+  const selA = document.getElementById("cmp-a") as HTMLSelectElement;
+  const selB = document.getElementById("cmp-b") as HTMLSelectElement;
+  const status = document.getElementById("cmp-status");
+
+  selA.value = "card";
+  selB.value = "quarter";
+
+  function dims(id: string): { w: number; h: number; name: string } | null {
+    const o = OBJECTS.find((x) => x.id === id);
+    if (!o) return null;
+    if (o.shape === "rect" && o.w && o.h) return { w: o.w, h: o.h, name: o.name };
+    if (o.shape === "circle" && o.d) return { w: o.d, h: o.d, name: o.name };
+    return null;
+  }
+  function shapeOf(id: string) {
+    return OBJECTS.find((x) => x.id === id)?.shape ?? "rect";
+  }
+
+  function isDark() {
+    return document.documentElement.getAttribute("data-theme") === "dark";
+  }
+
+  function draw() {
+    const dpr = window.devicePixelRatio || 1;
+    const rect = stage.getBoundingClientRect();
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    canvas.style.width = rect.width + "px";
+    canvas.style.height = rect.height + "px";
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, rect.width, rect.height);
+
+    const a = dims(selA.value);
+    const b = dims(selB.value);
+    if (!a || !b) return;
+
+    const mmToPx = (loadCalibration().pxPerInch * IN_PER_CM) / 10; // px per mm
+    // lay them out side by side, scale down only if they don't fit
+    const gap = 48;
+    const totalW = (a.w + b.w) * mmToPx + gap;
+    const maxH = Math.max(a.h, b.h) * mmToPx;
+    const scale = Math.min(1, (rect.width - 48) / totalW, (rect.height - 60) / maxH);
+
+    const colors = { a: "#0070f3", b: "#7928ca" };
+    let x = (rect.width - totalW * scale) / 2;
+    const baseY = rect.height / 2;
+
+    [{ d: a, id: selA.value, c: colors.a }, { d: b, id: selB.value, c: colors.b }].forEach((item) => {
+      const w = item.d.w * mmToPx * scale;
+      const h = item.d.h * mmToPx * scale;
+      ctx.save();
+      ctx.strokeStyle = item.c;
+      ctx.fillStyle = item.c + "14";
+      ctx.lineWidth = 2;
+      if (shapeOf(item.id) === "circle") {
+        const r = w / 2;
+        ctx.beginPath();
+        ctx.arc(x + r, baseY, r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+      } else {
+        ctx.beginPath();
+        ctx.rect(x, baseY - h / 2, w, h);
+        ctx.fill();
+        ctx.stroke();
+      }
+      // label
+      ctx.fillStyle = isDark() ? "#fafafa" : "#171717";
+      ctx.font = "600 13px 'Geist', system-ui, sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "top";
+      ctx.fillText(item.d.name, x + w / 2, baseY + Math.max(h, 0) / 2 + 10);
+      ctx.restore();
+      x += w + gap * scale;
+    });
+
+    if (status) {
+      status.textContent =
+        scale >= 0.999
+          ? "Shown at true actual size."
+          : `Scaled to fit (${Math.round(scale * 100)}% of actual size).`;
+    }
+  }
+
+  selA.addEventListener("change", draw);
+  selB.addEventListener("change", draw);
+  window.addEventListener("resize", draw);
+  window.addEventListener("ror:calibration", draw);
+  window.addEventListener("ror:theme", draw);
+  draw();
+</script>
+
+<style>
+  .section {
+    padding-block: 56px;
+  }
+  .section-title {
+    margin: 8px 0 0;
+  }
+  .section-lead {
+    margin: 12px 0 24px;
+    max-width: 64ch;
+    color: var(--color-body);
+    font: 400 18px / 28px var(--font-sans);
+  }
+  .cmp-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px 32px;
+    padding: 16px 20px;
+    background: var(--color-canvas);
+  }
+  .cmp-field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font: 500 13px var(--font-sans);
+    color: var(--color-body);
+  }
+  .cmp-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .cmp-dot.a {
+    background: #0070f3;
+  }
+  .cmp-dot.b {
+    background: #7928ca;
+  }
+  .cmp-select {
+    height: 40px;
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-sm);
+    padding: 0 12px;
+    font: 400 14px var(--font-sans);
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    cursor: pointer;
+    max-width: 220px;
+  }
+  .cmp-select:focus-visible {
+    outline: 2px solid var(--color-link);
+    outline-offset: 1px;
+    border-color: var(--color-link);
+  }
+  .cmp-stage {
+    position: relative;
+    margin-top: 16px;
+    height: min(60vh, 500px);
+    background:
+      linear-gradient(var(--color-hairline) 1px, transparent 1px) 0 0 / 100% 24px,
+      linear-gradient(90deg, var(--color-hairline) 1px, transparent 1px) 0 0 / 24px 100%,
+      var(--color-canvas);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+    overflow: hidden;
+  }
+  #cmp-canvas {
+    position: absolute;
+    inset: 0;
+  }
+  .cmp-status {
+    margin: 14px 0 0;
+    font: 500 14px var(--font-sans);
+    color: var(--color-body);
+  }
+  @media (max-width: 640px) {
+    .section {
+      padding-block: 40px;
+    }
+    .cmp-controls {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 12px;
+    }
+    .cmp-field {
+      justify-content: space-between;
+    }
+    .cmp-select {
+      max-width: none;
+      flex: 1;
+      margin-left: 8px;
+    }
+    .cmp-stage {
+      height: min(56vh, 420px);
+    }
+  }</style>

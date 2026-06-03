@@ -1,0 +1,185 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+
+const title = "Printable Ruler PDF — Free Actual-Size cm & inch Ruler";
+const description =
+  "Print a free, actual-size paper ruler in centimeters and inches. Uses true physical units so it prints accurately at 100% scale — no calibration needed.";
+const canonical = "https://aceonlineruler.com/print/";
+
+// 30 cm of millimeter ticks
+const mm = Array.from({ length: 301 }, (_, i) => i);
+// 12 inches at 1/16 graduations
+const sixteenths = Array.from({ length: 12 * 16 + 1 }, (_, i) => i);
+---
+
+<Layout title={title} description={description} canonical={canonical}>
+  <Header />
+  <main>
+    <section class="print-intro">
+      <div class="container-page">
+        <p class="eyebrow">Printable ruler</p>
+        <h1 class="display-lg" style="margin:8px 0 0;">Print an actual-size paper ruler.</h1>
+        <p class="print-lead">
+          This ruler uses true physical units, so it prints at exact size on any printer.
+          Set your print dialog to <strong>100% scale</strong> (no "fit to page") and use the
+          generated PDF or paper copy as a real 30&nbsp;cm / 12&nbsp;inch ruler.
+        </p>
+        <div class="print-actions">
+          <button id="btn-print" class="btn-primary" type="button">Print / Save as PDF</button>
+          <a href="/" class="btn-secondary">Back to on-screen ruler</a>
+        </div>
+        <p class="print-note">Tip: In the print dialog choose "Save as PDF" as the destination to get a printable PDF file.</p>
+      </div>
+    </section>
+
+    <div class="print-sheet">
+      <!-- Centimeter ruler -->
+      <div class="pr-scroll">
+        <div class="pr-ruler pr-cm" aria-label="30 centimeter ruler">
+          <span class="pr-unit">cm</span>
+          {mm.map((i) => (
+            <span
+              class={`pr-tick ${i % 10 === 0 ? "major" : i % 5 === 0 ? "mid" : ""}`}
+              style={`left:${i}mm`}
+            >
+              {i % 10 === 0 && <span class="pr-num">{i / 10}</span>}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <!-- Inch ruler -->
+      <div class="pr-scroll">
+        <div class="pr-ruler pr-in" aria-label="12 inch ruler">
+          <span class="pr-unit">in</span>
+          {sixteenths.map((j) => (
+            <span
+              class={`pr-tick ${j % 16 === 0 ? "major" : j % 8 === 0 ? "mid" : j % 4 === 0 ? "qtr" : ""}`}
+              style={`left:calc(${j} * (1in / 16))`}
+            >
+              {j % 16 === 0 && <span class="pr-num">{j / 16}</span>}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<script>
+  document.getElementById("btn-print")?.addEventListener("click", () => window.print());
+</script>
+
+<style>
+  .print-intro {
+    padding-block: 56px 24px;
+  }
+  .print-lead {
+    margin: 14px 0 0;
+    max-width: 64ch;
+    color: var(--color-body);
+    font: 400 18px / 28px var(--font-sans);
+  }
+  .print-actions {
+    margin-top: 24px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .print-note {
+    margin: 16px 0 0;
+    font: 400 13px var(--font-sans);
+    color: var(--color-mute);
+  }
+
+  .print-sheet {
+    max-width: 1200px;
+    margin: 32px auto 64px;
+    padding: 0 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+  }
+
+  .pr-ruler {
+    position: relative;
+    height: 64px;
+    border: 1px solid var(--color-ink);
+    border-radius: 4px;
+    background: #fff;
+  }
+  /* On-screen: rulers keep true physical width and scroll horizontally
+     inside their own track so they never overflow the page on mobile. */
+  .pr-scroll {
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    padding-bottom: 6px;
+  }
+  /* container is exactly the ruler length so ticks align */
+  .pr-cm {
+    width: 300mm;
+  }
+  .pr-in {
+    width: 12in;
+  }
+  .pr-unit {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    font: 600 11px var(--font-mono);
+    color: var(--color-ink);
+  }
+  .pr-tick {
+    position: absolute;
+    bottom: 0;
+    width: 1px;
+    height: 8px;
+    background: var(--color-ink);
+  }
+  .pr-tick.qtr {
+    height: 14px;
+  }
+  .pr-tick.mid {
+    height: 18px;
+  }
+  .pr-tick.major {
+    height: 30px;
+    width: 1.2px;
+  }
+  .pr-num {
+    position: absolute;
+    bottom: 32px;
+    left: 3px;
+    font: 500 11px var(--font-mono);
+    color: var(--color-ink);
+  }
+
+  @media print {
+    :global(.site-header),
+    :global(.site-footer),
+    .print-intro {
+      display: none !important;
+    }
+    .print-sheet {
+      margin: 12mm 0 0;
+      padding: 0 8mm;
+      gap: 24mm;
+    }
+    /* Never clip the rulers when printing — show full physical width. */
+    .pr-scroll {
+      overflow: visible;
+      padding-bottom: 0;
+    }
+    .pr-ruler {
+      border-color: #000;
+    }
+    .pr-tick,
+    .pr-tick.major {
+      background: #000;
+    }
+  }
+</style>

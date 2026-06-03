@@ -1,0 +1,255 @@
+---
+import LanguageSelect from "./LanguageSelect.astro";
+import ThemeToggle from "./ThemeToggle.astro";
+
+const links = [
+  { href: "/", label: "Ruler", key: "nav.ruler" },
+  { href: "/converter/", label: "Converter", key: "nav.convert" },
+  { href: "/size-visualizer/", label: "Size visualizer", key: "nav.visualizer" },
+  { href: "/compare-sizes/", label: "Compare sizes", key: "nav.compare" },
+  { href: "/calibrate/", label: "Calibrate", key: "nav.calibrate" },
+  { href: "/ppi-calculator/", label: "PPI calculator", key: "nav.ppi" },
+  { href: "/how-to-use/", label: "How to use", key: "nav.how" },
+  { href: "/faq/", label: "FAQ", key: "nav.faq" },
+];
+
+const path = Astro.url.pathname;
+const isActive = (href: string) => (href === "/" ? path === "/" : path.startsWith(href));
+---
+
+<header class="site-header">
+  <div class="container-page header-inner">
+    <a href="/" class="brand" aria-label="Ace Online Ruler home">
+      <span class="brand-mark" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <rect x="2" y="7" width="20" height="10" rx="2" stroke="currentColor" stroke-width="1.6" />
+          <path d="M6 7v3M9 7v2M12 7v3M15 7v2M18 7v3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+        </svg>
+      </span>
+      <span class="brand-name">Ace Online Ruler</span>
+    </a>
+
+    <nav class="nav-links" aria-label="Primary">
+      {links.map((l) => <a href={l.href} class={`nav-link ${isActive(l.href) ? "is-active" : ""}`} aria-current={isActive(l.href) ? "page" : undefined} data-i18n={l.key}>{l.label}</a>)}
+    </nav>
+
+    <div class="header-actions">
+      <ThemeToggle />
+      <LanguageSelect />
+      <a href="/" class="btn-primary btn-nav" data-i18n="nav.open">Open ruler</a>
+    </div>
+
+    <button id="nav-toggle" class="nav-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <!-- Mobile menu -->
+  <div id="mobile-menu" class="mobile-menu" hidden>
+    <nav aria-label="Mobile">
+      {links.map((l) => <a href={l.href} class={`mobile-link ${isActive(l.href) ? "is-active" : ""}`} data-nav-close data-i18n={l.key}>{l.label}</a>)}
+      <div class="mobile-lang"><LanguageSelect id="lang-select-mobile" /><ThemeToggle /></div>
+      <a href="/" class="btn-primary mobile-cta" data-nav-close data-i18n="nav.open">Open ruler</a>
+    </nav>
+  </div>
+</header>
+
+<script>
+  import { initI18n } from "../scripts/i18n.ts";
+  import { initTheme } from "../scripts/theme.ts";
+  initI18n();
+  initTheme();
+
+  const toggle = document.getElementById("nav-toggle");
+  const menu = document.getElementById("mobile-menu");
+
+  function setOpen(open: boolean) {
+    if (!toggle || !menu) return;
+    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    toggle.classList.toggle("is-open", open);
+    menu.hidden = !open;
+    document.body.style.overflow = open ? "hidden" : "";
+  }
+
+  toggle?.addEventListener("click", () => setOpen(menu?.hidden ?? false));
+  menu?.querySelectorAll("[data-nav-close]").forEach((el) =>
+    el.addEventListener("click", () => setOpen(false)),
+  );
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && menu && !menu.hidden) setOpen(false);
+  });
+</script>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: color-mix(in srgb, var(--color-canvas) 80%, transparent);
+    backdrop-filter: saturate(180%) blur(12px);
+    border-bottom: 1px solid var(--color-hairline);
+  }
+  .header-inner {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    height: 64px;
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    text-decoration: none;
+    color: var(--color-ink);
+  }
+  .brand-mark {
+    display: grid;
+    place-items: center;
+    color: var(--color-ink);
+  }
+  .brand-name {
+    font: 600 16px var(--font-sans);
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+    color: #7a9a00; /* favicon lime, deepened for contrast on light header */
+  }
+  html[data-theme="dark"] .brand-name {
+    color: #d0f020; /* favicon lime — pops against the dark header */
+  }
+  .nav-links {
+    display: flex;
+    gap: 4px;
+    margin-left: 8px;
+  }
+  .nav-link {
+    font: 400 14px var(--font-sans);
+    letter-spacing: -0.01em;
+    color: var(--color-body);
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 9999px;
+    transition: background 0.15s, color 0.15s;
+    white-space: nowrap;
+  }
+  .nav-link:hover {
+    background: var(--color-canvas-soft-2);
+    color: var(--color-ink);
+  }
+  .nav-link.is-active {
+    color: var(--color-ink);
+    background: var(--color-canvas-soft-2);
+  }
+  .mobile-link.is-active {
+    color: var(--color-ink);
+    background: var(--color-canvas-soft-2);
+  }
+  .header-actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .btn-nav {
+    padding: 7px 16px;
+    font-size: 14px;
+    white-space: nowrap;
+  }
+
+  .nav-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 40px;
+    height: 40px;
+    padding: 0 9px;
+    background: transparent;
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+  }
+  .nav-toggle span {
+    display: block;
+    height: 2px;
+    width: 100%;
+    background: var(--color-ink);
+    border-radius: 2px;
+    transition: transform 0.2s, opacity 0.2s;
+  }
+  .nav-toggle.is-open span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+  .nav-toggle.is-open span:nth-child(2) {
+    opacity: 0;
+  }
+  .nav-toggle.is-open span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  .mobile-menu {
+    border-top: 1px solid var(--color-hairline);
+    background: var(--color-canvas);
+    padding: 12px 0 20px;
+  }
+  .mobile-menu[hidden] {
+    display: none;
+  }
+  .mobile-menu nav {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-inline: 16px;
+  }
+  .mobile-link {
+    font: 500 16px var(--font-sans);
+    color: var(--color-ink);
+    text-decoration: none;
+    padding: 12px 8px;
+    border-radius: var(--radius-sm);
+  }
+  .mobile-link:hover {
+    background: var(--color-canvas-soft-2);
+  }
+  .mobile-lang {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 8px 4px;
+  }
+  .mobile-cta {
+    margin-top: 12px;
+    justify-content: center;
+  }
+
+  @media (max-width: 1100px) {
+    .nav-links {
+      display: none;
+    }
+    .header-actions .btn-nav {
+      display: none;
+    }
+    .nav-toggle {
+      display: flex;
+    }
+    .header-actions {
+      margin-left: auto;
+    }
+  }
+
+  /* Phones: keep only the brand + hamburger in the bar.
+     Language + theme toggle live inside the mobile menu. */
+  @media (max-width: 560px) {
+    .header-inner {
+      gap: 12px;
+    }
+    .header-actions {
+      display: none;
+    }
+    .nav-toggle {
+      margin-left: auto;
+    }
+  }
+</style>

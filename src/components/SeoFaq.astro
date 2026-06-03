@@ -1,0 +1,149 @@
+---
+// Reusable SEO FAQ section with matching FAQPage JSON-LD.
+// Pass a `faqs` array and optional title; defaults to the home set.
+export interface FaqItem {
+  q: string;
+  a: string;
+}
+export interface Props {
+  faqs?: FaqItem[];
+  title?: string;
+}
+
+const defaultFaqs: FaqItem[] = [
+  {
+    q: "Can I use my phone as a ruler?",
+    a: "Yes. Open Ace Online Ruler in your phone's browser and calibrate the screen using auto-detect, your screen diagonal, or a credit card. The on-screen ruler then shows actual size in inches, cm and mm, turning your phone into a real measuring tool with no app to install.",
+  },
+  {
+    q: "Is there a ruler online?",
+    a: "Yes. Ace Online Ruler is a free online ruler that runs in your browser. It displays an accurate, to-scale ruler in inches, centimeters and millimeters, and works on desktops, laptops, tablets and phones.",
+  },
+  {
+    q: "How to identify 1 inch?",
+    a: "One inch is the distance between two large numbered marks on the inch scale. After calibrating the online ruler, the space from 0 to 1 equals one real inch — about the width of a US quarter and a bit, or roughly 2.54 centimeters.",
+  },
+  {
+    q: "How to measure cm online?",
+    a: "Switch the online ruler to cm/mm, calibrate your screen so 1 cm on screen matches 1 cm in real life, then place your object against the centimeter edge. Each centimeter is divided into 10 millimeters, with a taller mark every 5 mm for quick reading.",
+  },
+  {
+    q: "Can a smartphone measure?",
+    a: "Yes. A smartphone can measure in two ways: with an on-screen ruler like Ace Online Ruler for small objects placed against the display, or with built-in AR measuring apps that use the camera. The on-screen ruler is the most reliable for objects that fit on the screen once it is calibrated.",
+  },
+  {
+    q: "Can I use my camera as a ruler?",
+    a: "Camera-based AR apps can estimate distances, but they need a reference for scale and are less precise for small items. For accurate, repeatable results on objects that fit on your display, use the calibrated on-screen online ruler instead.",
+  },
+  {
+    q: "Can we measure online?",
+    a: "Yes. You can measure online with Ace Online Ruler. Calibrate your screen once, choose inches or cm/mm, and either hold an object against the ruler edge or drag across the grid to measure a distance. You can also compare object sizes and convert units on the same site.",
+  },
+  {
+    q: "How to read a ruler online?",
+    a: "Line up one end of your object with the 0 mark. On the inch scale, the longest marks are whole inches and the shorter marks are 1/2, 1/4, 1/8 and 1/16 inch. On the metric scale, numbered marks are centimeters and the small ticks between them are millimeters. Read the value at the object's far end.",
+  },
+  {
+    q: "How to view the ruler in Word online?",
+    a: "In Word for the web, open the View tab and turn on the Ruler checkbox to show the horizontal and vertical rulers. If you need a real, actual-size ruler to measure a physical object, use Ace Online Ruler in a separate browser tab.",
+  },
+  {
+    q: "How to add a ruler in Word online?",
+    a: "Word online does not insert a measuring ruler into the page; the View tab Ruler option only shows the layout guide for margins and tabs. To add or measure with a true-to-size ruler, use Ace Online Ruler and read the measurement directly on your screen.",
+  },
+  {
+    q: "How to show the ruler in PowerPoint online?",
+    a: "In PowerPoint for the web, go to the View tab and enable the Ruler option to display the slide ruler. For measuring a real object at actual size, open Ace Online Ruler in your browser and calibrate it to your screen.",
+  },
+  {
+    q: "How to use the online ruler?",
+    a: "Calibrate your screen with auto-detect, your screen diagonal, or a credit card; pick inches or cm/mm; choose where to place the ruler or enable the free movable ruler; then hold an object against the edge for actual size or drag across the grid to measure a distance.",
+  },
+  {
+    q: "How to add a ruler in Word online (measuring an object)?",
+    a: "Word's ruler is a layout guide, not a physical measuring tool. To measure a real object, keep your document open and use Ace Online Ruler in another tab — calibrate once and measure in inches, cm or mm at actual size.",
+  },
+  {
+    q: "How to use a ruler online?",
+    a: "Using a ruler online is simple: open Ace Online Ruler, calibrate it to your screen so measurements are accurate, select your unit, and measure by placing the object against the ruler edge or dragging to measure a free distance. Your calibration is saved for next time.",
+  },
+];
+
+const { faqs = defaultFaqs, title = "Online ruler — frequently asked questions." } = Astro.props;
+
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((f) => ({
+    "@type": "Question",
+    name: f.q,
+    acceptedAnswer: { "@type": "Answer", text: `<p>${f.a}</p>` },
+  })),
+};
+---
+
+<section id="faq" class="seo-faq">
+  <div class="container-page">
+    <p class="eyebrow">FAQ</p>
+    <h2 class="display-lg seo-faq-title">{title}</h2>
+    <div class="faq-list">
+      {faqs.map((f) => (
+        <details class="faq-item">
+          <summary><span>{f.q}</span></summary>
+          <p>{f.a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script type="application/ld+json" set:html={JSON.stringify(faqLd)} />
+
+<style>
+  .seo-faq {
+    padding-block: 56px;
+    background: var(--color-canvas-soft-2);
+  }
+  .seo-faq-title {
+    margin: 8px 0 28px;
+    max-width: 24ch;
+  }
+  .faq-list {
+    display: grid;
+    gap: 0;
+    max-width: 820px;
+    border-top: 1px solid var(--color-hairline);
+  }
+  .faq-item {
+    border-bottom: 1px solid var(--color-hairline);
+  }
+  .faq-item summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 18px 0;
+    font: 500 16px var(--font-sans);
+    color: var(--color-ink);
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+  .faq-item summary::after {
+    content: "+";
+    color: var(--color-mute);
+    font-size: 20px;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .faq-item[open] summary::after {
+    content: "–";
+  }
+  .faq-item p {
+    margin: 0 0 18px;
+    max-width: 74ch;
+    color: var(--color-body);
+    font: 400 15px / 23px var(--font-sans);
+  }
+</style>

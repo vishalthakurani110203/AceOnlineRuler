@@ -1,0 +1,21 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import PpiCalculator from "../components/PpiCalculator.astro";
+import RulerTool from "../components/RulerTool.astro";
+import Footer from "../components/Footer.astro";
+
+const title = "PPI Calculator — Screen Pixel Density (Pixels Per Inch)";
+const description =
+  "Free PPI calculator. Enter your screen resolution and diagonal to find its true pixel density, then apply it to the online ruler for an exact scale.";
+const canonical = "https://aceonlineruler.com/ppi-calculator/";
+---
+
+<Layout title={title} description={description} canonical={canonical}>
+  <Header />
+  <main>
+    <PpiCalculator soft={false} />
+    <RulerTool defaultUnit="cm" />
+  </main>
+  <Footer />
+</Layout>

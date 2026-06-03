@@ -1,0 +1,83 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import LandingHero from "../components/LandingHero.astro";
+import RulerTool from "../components/RulerTool.astro";
+import PpiCalculator from "../components/PpiCalculator.astro";
+import Prose from "../components/Prose.astro";
+import SeoFaq from "../components/SeoFaq.astro";
+import Footer from "../components/Footer.astro";
+
+const title = "Online CM Ruler — Actual Size Centimeter & Millimeter Ruler";
+const description =
+  "Free online ruler in cm at actual size. An accurate centimeter and mm ruler online — calibrate your screen so the online ruler in cm matches real life.";
+const canonical = "https://aceonlineruler.com/cm-ruler/";
+const keywords =
+  "online ruler in cm, online ruler cm, cm online ruler, online ruler mm, centimeter ruler online, online ruler actual size, accurate online ruler, online ruler to scale, free online ruler";
+
+const faqs = [
+  {
+    q: "How do I get an accurate cm ruler on screen?",
+    a: "Calibrate once using auto-detect, your screen diagonal, or a credit card. The online ruler in cm then renders centimeters and millimeters at true actual size and remembers the setting for next time.",
+  },
+  {
+    q: "How many millimeters are in a centimeter on the ruler?",
+    a: "Each centimeter is divided into 10 millimeters, with a taller mark every 5 mm so you can read fine measurements quickly and accurately.",
+  },
+  {
+    q: "Is the online cm ruler actual size?",
+    a: "Yes. After you calibrate your screen, 1 cm on the ruler equals exactly 1 cm in real life. Keep your browser zoom at 100% for the most reliable, to-scale results.",
+  },
+  {
+    q: "How to measure cm online?",
+    a: "Set the ruler to cm/mm, calibrate your screen, then place your object against the centimeter edge starting at 0, or drag across the grid to measure a free distance with a live readout.",
+  },
+  {
+    q: "Can I use my phone as a cm ruler?",
+    a: "Yes. Open this page on your phone, calibrate the screen once, and you have an accurate centimeter and millimeter ruler wherever you go — no app needed.",
+  },
+  {
+    q: "How do I convert the cm reading to inches?",
+    a: "Flip the unit toggle to inches and the same calibrated scale switches instantly, or use the unit converter to turn any centimeter value into inches, mm, meters and more.",
+  },
+];
+---
+
+<Layout title={title} description={description} canonical={canonical} keywords={keywords}>
+  <Header />
+  <main>
+    <LandingHero
+      eyebrow="Centimeters · Millimeters · Actual size"
+      title="Online ruler in"
+      highlight="cm & mm."
+      lead="Measure anything in centimeters and millimeters right on your screen. Calibrate once and every reading matches the real world."
+    />
+    <RulerTool defaultUnit="cm" />
+    <PpiCalculator />
+
+    <Prose eyebrow="Guide" title="Using the centimeter ruler" id="how">
+      <p>
+        The metric ruler shows <strong>centimeters</strong> as the numbered, full-height marks and
+        <strong>millimeters</strong> as the smaller ticks in between — ten per centimeter, with a
+        mid-height mark at every 5&nbsp;mm. Hold an object against any active edge for a true actual-size
+        reading, or drag across the grid to measure a free distance. Calibrated, it is a dependable
+        <strong>online ruler in cm</strong> and millimeter scale.
+      </p>
+      <h3>Why calibrate for centimeters?</h3>
+      <p>
+        Screens vary widely in pixel density, so a raw centimeter drawn in pixels can be noticeably off.
+        Calibration sets your real pixels-per-inch so 1&nbsp;cm on screen equals exactly 1&nbsp;cm in your hand.
+      </p>
+      <ul>
+        <li><strong>Auto-detect</strong> — fastest, matches your device automatically.</li>
+        <li><strong>Screen diagonal</strong> — enter your screen size in inches.</li>
+        <li><strong>Credit card</strong> — most accurate, uses the standard 85.6&nbsp;mm card width.</li>
+      </ul>
+      <h3>Looking for inches?</h3>
+      <p>Switch the unit toggle to inches, or use the dedicated <a href="/inch-ruler/">inch ruler</a> and <a href="/mm-ruler/">millimeter ruler</a>.</p>
+    </Prose>
+
+    <SeoFaq faqs={faqs} title="Online cm ruler — FAQ" />
+  </main>
+  <Footer />
+</Layout>

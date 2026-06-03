@@ -1,0 +1,53 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Prose from "../components/Prose.astro";
+import Footer from "../components/Footer.astro";
+
+const title = "Terms of Service — Ace Online Ruler";
+const description = "Terms for using Ace Online Ruler, a free online measuring tool provided as-is.";
+const canonical = "https://aceonlineruler.com/terms/";
+---
+
+<Layout title={title} description={description} canonical={canonical}>
+  <Header />
+  <main>
+    <Prose eyebrow="Legal" title="Terms of Service">
+      <p><strong>Last updated:</strong> {new Date().getFullYear()}</p>
+      <p>
+        Ace Online Ruler is a free tool provided "as is" for convenience. By accessing or using this
+        website and its tools, you agree to these terms. If you do not agree, please do not use the site.
+      </p>
+      <h3>Use of the tools</h3>
+      <p>
+        The ruler, calibration, converter, visualizer, comparison and related tools are offered free of
+        charge for personal and commercial use. You may use measurements produced by the site for your
+        own purposes.
+      </p>
+      <h3>Accuracy &amp; disclaimer</h3>
+      <p>
+        We work hard to make the tools accurate, but on-screen measurement depends on your display,
+        calibration and browser zoom. Results are provided without warranty of any kind. For critical,
+        medical, legal, financial or safety-related measurements, always verify with a certified physical
+        instrument. We accept no liability for loss or damage arising from decisions made based on
+        on-screen measurements.
+      </p>
+      <h3>Acceptable use</h3>
+      <ul>
+        <li>Use the tools for lawful purposes only.</li>
+        <li>Do not attempt to disrupt, overload, reverse-engineer for harm, or abuse the service.</li>
+        <li>Do not misrepresent the tools as a certified measuring device.</li>
+      </ul>
+      <h3>Intellectual property</h3>
+      <p>
+        The site design, content and branding are the property of Ace Online Ruler. You may link to the
+        site freely, but you may not copy or redistribute it as your own.
+      </p>
+      <h3>Changes</h3>
+      <p>We may update the tools and these terms over time. Continued use means you accept the current terms.</p>
+      <h3>Contact</h3>
+      <p>Questions about these terms? Reach us through our <a href="/contact/">Contact page</a>.</p>
+    </Prose>
+  </main>
+  <Footer />
+</Layout>

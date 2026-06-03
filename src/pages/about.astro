@@ -1,0 +1,72 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Prose from "../components/Prose.astro";
+import Footer from "../components/Footer.astro";
+
+const title = "About Us — Ace Online Ruler";
+const description =
+  "Learn about Ace Online Ruler, a free, privacy-first online ruler and measurement suite that turns any screen into an accurate, to-scale measuring tool.";
+const canonical = "https://aceonlineruler.com/about/";
+
+const aboutLd = {
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  name: "About Ace Online Ruler",
+  url: canonical,
+  description,
+  publisher: {
+    "@type": "Organization",
+    name: "Ace Online Ruler",
+    url: "https://aceonlineruler.com/",
+  },
+};
+---
+
+<Layout title={title} description={description} canonical={canonical}>
+  <Header />
+  <main>
+    <Prose eyebrow="Company" title="About Ace Online Ruler">
+      <p>
+        <strong>Ace Online Ruler</strong> is a free online measurement tool that turns any screen
+        into an accurate, to-scale ruler. Our goal is simple: give anyone a dependable way to measure
+        in inches, centimeters and millimeters without hunting for a physical ruler — straight from a
+        browser, on any device.
+      </p>
+
+      <h3>Why we built it</h3>
+      <p>
+        Most online rulers ignore the one thing that matters most: accuracy. Screens vary widely in
+        pixel density, so a fixed pixel ruler is rarely correct. We built a calibration system — auto
+        device detection, screen-diagonal entry and credit-card calibration — so that one centimeter on
+        screen equals one centimeter in the real world. Calibrate once and the tool remembers your
+        screen for next time.
+      </p>
+
+      <h3>What you can do here</h3>
+      <ul>
+        <li>Measure at <strong>actual size</strong> in inches, cm and mm with edge rulers or a free, movable ruler.</li>
+        <li>Calibrate your screen for pixel-perfect accuracy.</li>
+        <li>Use the PPI calculator, unit converter, real-size visualizer and size-comparison tools.</li>
+        <li>Print an actual-size paper ruler when you need one offline.</li>
+      </ul>
+
+      <h3>Privacy first</h3>
+      <p>
+        Everything runs entirely in your browser. We don't require an account, we don't upload anything
+        you measure, and we don't track your activity. The only thing saved is your calibration setting,
+        stored locally on your device. You can read more in our
+        <a href="/privacy/">Privacy Policy</a>.
+      </p>
+
+      <h3>Get in touch</h3>
+      <p>
+        Have feedback, a feature request, or found a device we should add to our calibration database?
+        We'd love to hear from you — visit the <a href="/contact/">Contact page</a>. To understand the
+        terms of use, see our <a href="/terms/">Terms of Service</a>.
+      </p>
+    </Prose>
+  </main>
+  <Footer />
+  <script type="application/ld+json" set:html={JSON.stringify(aboutLd)} />
+</Layout>

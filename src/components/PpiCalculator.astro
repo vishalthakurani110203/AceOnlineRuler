@@ -1,0 +1,194 @@
+---
+import { t } from "../i18n/server";
+export interface Props {
+  soft?: boolean;
+}
+const { soft = true } = Astro.props;
+---
+
+<section id="ppi" class={`section ${soft ? "section-soft" : ""}`}>
+  <div class="container-page">
+    <p class="eyebrow" data-i18n="ppi.eyebrow">{t("ppi.eyebrow")}</p>
+    <h2 class="display-lg section-title" data-i18n="ppi.title">{t("ppi.title")}</h2>
+    <p class="section-lead" data-i18n="ppi.lead">{t("ppi.lead")}</p>
+
+    <div class="ppi-card card-soft">
+      <div class="ppi-fields">
+        <label class="ppi-field">
+          <span data-i18n="ppi.width">{t("ppi.width")}</span>
+          <input id="ppi-w" type="number" inputmode="numeric" min="1" placeholder="1920" />
+        </label>
+        <span class="ppi-x" aria-hidden="true">×</span>
+        <label class="ppi-field">
+          <span data-i18n="ppi.height">{t("ppi.height")}</span>
+          <input id="ppi-h" type="number" inputmode="numeric" min="1" placeholder="1080" />
+        </label>
+        <label class="ppi-field">
+          <span data-i18n="ppi.diagonal">{t("ppi.diagonal")}</span>
+          <input id="ppi-d" type="number" inputmode="decimal" min="1" step="0.1" placeholder="24" />
+        </label>
+      </div>
+
+      <div class="ppi-out">
+        <div class="ppi-result">
+          <span class="eyebrow" data-i18n="ppi.result">{t("ppi.result")}</span>
+          <strong id="ppi-value">— PPI</strong>
+          <span id="ppi-sub" class="ppi-sub"></span>
+        </div>
+        <div class="ppi-actions">
+          <button id="ppi-calc" class="btn-primary btn-sm" type="button" data-i18n="ppi.calc">{t("ppi.calc")}</button>
+          <button id="ppi-apply" class="btn-secondary btn-sm" type="button" disabled data-i18n="ppi.apply">{t("ppi.apply")}</button>
+        </div>
+      </div>
+    </div>
+    <p id="ppi-msg" class="ppi-msg" aria-live="polite"></p>
+  </div>
+</section>
+
+<script>
+  import { saveCalibration } from "../scripts/calibration.ts";
+
+  const w = document.getElementById("ppi-w") as HTMLInputElement;
+  const h = document.getElementById("ppi-h") as HTMLInputElement;
+  const d = document.getElementById("ppi-d") as HTMLInputElement;
+  const valueEl = document.getElementById("ppi-value");
+  const subEl = document.getElementById("ppi-sub");
+  const applyBtn = document.getElementById("ppi-apply") as HTMLButtonElement;
+  const msg = document.getElementById("ppi-msg");
+  let lastPpi = 0;
+
+  function trc(key: string, fallback: string): string {
+    const fn = (window as Window & { __t?: (k: string) => string | undefined }).__t;
+    return (fn && fn(key)) || fallback;
+  }
+
+  function calc() {
+    const ppi = Math.sqrt(parseFloat(w.value) ** 2 + parseFloat(h.value) ** 2) / parseFloat(d.value);
+    if (!ppi || !isFinite(ppi)) {
+      if (valueEl) valueEl.textContent = "— PPI";
+      if (subEl) subEl.textContent = "";
+      applyBtn.disabled = true;
+      if (msg) msg.textContent = trc("ppi.fill", "Fill in width, height and diagonal.");
+      return;
+    }
+    lastPpi = ppi;
+    if (valueEl) valueEl.textContent = `${ppi.toFixed(1)} PPI`;
+    if (subEl) subEl.textContent = `${trc("ppi.dotpitch", "Dot pitch")} ≈ ${(25.4 / ppi).toFixed(3)} mm`;
+    applyBtn.disabled = false;
+    if (msg) msg.textContent = "";
+  }
+
+  document.getElementById("ppi-calc")?.addEventListener("click", calc);
+  [w, h, d].forEach((el) =>
+    el.addEventListener("keydown", (e) => {
+      if ((e as KeyboardEvent).key === "Enter") calc();
+    }),
+  );
+
+  applyBtn.addEventListener("click", () => {
+    if (!lastPpi || lastPpi < 20 || lastPpi > 1000) {
+      if (msg) msg.textContent = trc("ppi.range", "PPI must be between 20 and 1000.");
+      return;
+    }
+    const dpr = window.devicePixelRatio || 1;
+    saveCalibration({ pxPerInch: lastPpi / dpr, method: "calc", label: `${lastPpi.toFixed(0)} PPI (calculator)`, confident: true });
+    if (msg) msg.textContent = trc("ppi.applied", "Applied to the ruler and saved.");
+  });
+</script>
+
+<style>
+  .section {
+    padding-block: 64px;
+  }
+  .section-soft {
+    background: var(--color-canvas-soft-2);
+  }
+  .section-title {
+    margin: 8px 0 0;
+  }
+  .section-lead {
+    margin: 12px 0 28px;
+    max-width: 60ch;
+    color: var(--color-body);
+    font: 400 18px / 28px var(--font-sans);
+  }
+  .ppi-card {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 28px;
+    padding: 28px;
+    background: var(--color-canvas);
+  }
+  .ppi-fields {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .ppi-x {
+    padding-bottom: 10px;
+    color: var(--color-mute);
+    font: 400 16px var(--font-sans);
+  }
+  .ppi-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font: 500 13px var(--font-sans);
+    color: var(--color-body);
+  }
+  .ppi-field input {
+    width: 120px;
+    height: 44px;
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-sm);
+    padding: 0 12px;
+    font: 400 16px var(--font-sans);
+    background: var(--color-canvas);
+    color: var(--color-ink);
+  }
+  .ppi-field input:focus-visible {
+    outline: 2px solid var(--color-link);
+    outline-offset: 1px;
+    border-color: var(--color-link);
+  }
+  .ppi-out {
+    display: flex;
+    align-items: flex-end;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .ppi-result {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .ppi-result strong {
+    font: 600 28px var(--font-sans);
+    letter-spacing: -0.03em;
+    color: var(--color-ink);
+  }
+  .ppi-sub {
+    font: 400 13px var(--font-mono);
+    color: var(--color-mute);
+  }
+  .ppi-actions {
+    display: flex;
+    gap: 10px;
+  }
+  .ppi-msg {
+    margin: 14px 0 0;
+    font: 500 14px var(--font-sans);
+    color: var(--color-link-deep);
+  }
+  @media (max-width: 640px) {
+    .ppi-field input {
+      width: 100%;
+    }
+    .ppi-field {
+      flex: 1 1 40%;
+    }
+  }
+</style>

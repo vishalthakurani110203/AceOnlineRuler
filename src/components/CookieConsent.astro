@@ -1,0 +1,175 @@
+---
+// Cookie consent banner with Google Consent Mode v2.
+// Shows when Google Analytics and/or AdSense is configured.
+import { SITE } from "../config";
+const pubId = SITE.adsensePublisherId.trim();
+const gaId = SITE.gaMeasurementId.trim();
+const hasAds = pubId.length > 0;
+const hasGa = gaId.length > 0;
+const enabled = hasAds || hasGa;
+
+const text = hasAds
+  ? "We use cookies to run this site and, with your consent, to show ads and measure traffic. See our"
+  : "We use cookies to measure traffic with your consent. See our";
+---
+
+{enabled && (
+  <div id="cookie-consent" class="cc" role="dialog" aria-live="polite" aria-label="Cookie consent" hidden>
+    <div class="cc-inner">
+      <p class="cc-text">
+        {text} <a href="/privacy/">Privacy Policy</a>.
+      </p>
+      <div class="cc-actions">
+        <button id="cc-reject" class="cc-btn cc-reject" type="button">Reject all</button>
+        <button id="cc-accept" class="cc-btn cc-accept" type="button">Accept all</button>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .cc {
+      position: fixed;
+      left: 16px;
+      right: 16px;
+      bottom: 16px;
+      z-index: 80;
+      background: var(--color-canvas);
+      border: 1px solid var(--color-hairline);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-modal);
+      padding: 16px 18px;
+    }
+    .cc[hidden] {
+      display: none;
+    }
+    .cc-inner {
+      max-width: 1100px;
+      margin-inline: auto;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+    .cc-text {
+      margin: 0;
+      flex: 1 1 320px;
+      font: 400 14px / 20px var(--font-sans);
+      color: var(--color-body);
+    }
+    .cc-text a {
+      color: var(--color-link);
+      text-decoration: none;
+    }
+    .cc-text a:hover {
+      text-decoration: underline;
+    }
+    .cc-actions {
+      display: flex;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+    .cc-btn {
+      font: 500 14px var(--font-sans);
+      padding: 9px 18px;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      border: 1px solid var(--color-hairline);
+    }
+    .cc-reject {
+      background: var(--color-canvas);
+      color: var(--color-ink);
+    }
+    .cc-reject:hover {
+      background: var(--color-canvas-soft-2);
+    }
+    .cc-accept {
+      background: var(--color-primary);
+      color: var(--color-on-primary);
+      border-color: var(--color-primary);
+    }
+    .cc-accept:hover {
+      opacity: 0.9;
+    }
+    @media (max-width: 560px) {
+      .cc-actions {
+        width: 100%;
+      }
+      .cc-btn {
+        flex: 1;
+      }
+    }
+  </style>
+
+  <script is:inline define:vars={{ pubId, hasAds, hasGa }}>
+    (function () {
+      var KEY = "ror.consent.v1";
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { window.dataLayer.push(arguments); }
+      window.gtag = window.gtag || gtag;
+
+      // If GA is not present, no head bootstrap ran — declare the
+      // privacy-safe default here so AdSense consent still works.
+      if (!hasGa) {
+        gtag("consent", "default", {
+          ad_storage: "denied",
+          ad_user_data: "denied",
+          ad_personalization: "denied",
+          analytics_storage: "denied",
+          functionality_storage: "granted",
+          security_storage: "granted",
+          wait_for_update: 500,
+        });
+      }
+
+      function loadAds() {
+        if (!hasAds || document.getElementById("adsbygoogle-js")) return;
+        var s = document.createElement("script");
+        s.id = "adsbygoogle-js";
+        s.async = true;
+        s.crossOrigin = "anonymous";
+        s.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=" + pubId;
+        document.head.appendChild(s);
+      }
+
+      function grant() {
+        var update = { analytics_storage: "granted" };
+        if (hasAds) {
+          update.ad_storage = "granted";
+          update.ad_user_data = "granted";
+          update.ad_personalization = "granted";
+        }
+        gtag("consent", "update", update);
+        loadAds();
+      }
+
+      function readStored() {
+        try { return localStorage.getItem(KEY); } catch (e) { return null; }
+      }
+      function store(v) {
+        try { localStorage.setItem(KEY, v); } catch (e) {}
+      }
+
+      var prior = readStored();
+      if (prior === "granted") {
+        grant();
+      } else if (prior !== "denied") {
+        document.addEventListener("DOMContentLoaded", function () {
+          var el = document.getElementById("cookie-consent");
+          if (el) el.hidden = false;
+        });
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        var banner = document.getElementById("cookie-consent");
+        var accept = document.getElementById("cc-accept");
+        var reject = document.getElementById("cc-reject");
+        if (accept) accept.addEventListener("click", function () {
+          store("granted"); grant(); if (banner) banner.hidden = true;
+        });
+        if (reject) reject.addEventListener("click", function () {
+          store("denied"); if (banner) banner.hidden = true;
+        });
+      });
+    })();
+  </script>
+)}

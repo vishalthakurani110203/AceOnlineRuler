@@ -1,0 +1,67 @@
+---
+// Generic SEO content section: heading + rich body + optional FAQ list.
+export interface FaqItem {
+  q: string;
+  a: string;
+}
+export interface Props {
+  id?: string;
+  eyebrow?: string;
+  title: string;
+  soft?: boolean;
+}
+const { id, eyebrow, title, soft = false } = Astro.props;
+---
+
+<section id={id} class={`prose-section ${soft ? "is-soft" : ""}`}>
+  <div class="container-page">
+    {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+    <h2 class="display-lg prose-title">{title}</h2>
+    <div class="prose-body">
+      <slot />
+    </div>
+  </div>
+</section>
+
+<style>
+  .prose-section {
+    padding-block: 56px;
+  }
+  .is-soft {
+    background: var(--color-canvas-soft-2);
+  }
+  .prose-title {
+    margin: 8px 0 20px;
+  }
+  .prose-body {
+    max-width: 70ch;
+    color: var(--color-body);
+    font: 400 16px / 26px var(--font-sans);
+  }
+  .prose-body :global(h3) {
+    margin: 28px 0 8px;
+    color: var(--color-ink);
+    font: 600 20px / 28px var(--font-sans);
+    letter-spacing: -0.02em;
+  }
+  .prose-body :global(p) {
+    margin: 0 0 14px;
+  }
+  .prose-body :global(ul) {
+    margin: 0 0 14px;
+    padding-left: 20px;
+    display: grid;
+    gap: 6px;
+  }
+  .prose-body :global(a) {
+    color: var(--color-link);
+    text-decoration: none;
+  }
+  .prose-body :global(a:hover) {
+    text-decoration: underline;
+  }
+  .prose-body :global(strong) {
+    color: var(--color-ink);
+    font-weight: 500;
+  }
+</style>

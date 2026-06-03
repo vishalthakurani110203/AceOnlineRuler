@@ -1,0 +1,433 @@
+---
+import { t } from "../i18n/server";
+import DevicePicker from "./DevicePicker.astro";
+export interface Props {
+  defaultUnit?: "cm" | "inch";
+}
+const { defaultUnit = "cm" } = Astro.props;
+---
+
+<section id="tool" class="tool-shell" data-default-unit={defaultUnit}>
+  <div class="container-page">
+    <!-- Toolbar -->
+    <div class="toolbar card-soft">
+      <div class="toolbar-group" role="group" aria-label="Device">
+        <span class="eyebrow toolbar-label" data-i18n="tool.device">{t("tool.device")}</span>
+        <DevicePicker id="device-picker" />
+      </div>
+
+      <div class="toolbar-group" role="group" aria-label="Units">
+        <span class="eyebrow toolbar-label" data-i18n="tool.unit">{t("tool.unit")}</span>
+        <div class="seg" role="tablist" aria-label="Measurement unit">
+          <button class={`seg-btn ${defaultUnit === "cm" ? "is-active" : ""}`} data-unit="cm" role="tab" aria-selected={defaultUnit === "cm"}>cm / mm</button>
+          <button class={`seg-btn ${defaultUnit === "inch" ? "is-active" : ""}`} data-unit="inch" role="tab" aria-selected={defaultUnit === "inch"}>inches</button>
+        </div>
+      </div>
+
+      <div class="toolbar-group" role="group" aria-label="Mode">
+        <span class="eyebrow toolbar-label" data-i18n="tool.mode">{t("tool.mode")}</span>
+        <div class="seg" role="tablist" aria-label="Tool mode">
+          <button class="seg-btn is-active" data-mode="measure" role="tab" aria-selected="true" data-i18n="tool.distance">{t("tool.distance")}</button>
+          <button class="seg-btn" data-mode="angle" role="tab" aria-selected="false" data-i18n="tool.angle">{t("tool.angle")}</button>
+        </div>
+      </div>
+
+      <div class="toolbar-group" role="group" aria-label="Ruler edges">
+        <span class="eyebrow toolbar-label" data-i18n="tool.edges">{t("tool.edges")}</span>
+        <div class="edge-grid">
+          <label class="chk"><input type="checkbox" data-edge="top" checked /> <span data-i18n="tool.top">{t("tool.top")}</span></label>
+          <label class="chk"><input type="checkbox" data-edge="bottom" /> <span data-i18n="tool.bottom">{t("tool.bottom")}</span></label>
+          <label class="chk"><input type="checkbox" data-edge="left" checked /> <span data-i18n="tool.left">{t("tool.left")}</span></label>
+          <label class="chk"><input type="checkbox" data-edge="right" /> <span data-i18n="tool.right">{t("tool.right")}</span></label>
+        </div>
+      </div>
+
+      <div class="toolbar-group" role="group" aria-label="Free ruler layout">
+        <label class="chk chk-free"><input type="checkbox" id="free-toggle" /> <span data-i18n="tool.free">{t("tool.free")}</span></label>
+        <div class="seg seg-free" role="group" aria-label="Free ruler orientation">
+          <button class="seg-btn is-active" data-free="h" type="button" data-i18n="tool.horizontal">{t("tool.horizontal")}</button>
+          <button class="seg-btn" data-free="v" type="button" data-i18n="tool.vertical">{t("tool.vertical")}</button>
+          <button class="seg-btn" data-free="d" type="button" data-i18n="tool.diagonal">{t("tool.diagonal")}</button>
+        </div>
+      </div>
+
+      <div class="toolbar-group">
+        <span class="eyebrow toolbar-label" data-i18n="tool.overlay">{t("tool.overlay")}</span>
+        <select id="object-select" class="field field-select" aria-label="Actual-size object overlay">
+          <option value="" data-i18n="tool.overlay.none">{t("tool.overlay.none")}</option>
+        </select>
+      </div>
+
+      <div class="toolbar-group toolbar-actions">
+        <button id="btn-fullscreen" class="btn-secondary btn-sm" type="button"><span aria-hidden="true">⤢</span> <span data-i18n="tool.fullscreen">{t("tool.fullscreen")}</span></button>
+        <button id="btn-clear" class="btn-secondary btn-sm" type="button" data-i18n="tool.clear">{t("tool.clear")}</button>
+        <button id="btn-share" class="btn-secondary btn-sm" type="button"><span aria-hidden="true">🔗</span> <span data-i18n="tool.share">{t("tool.share")}</span></button>
+        <span class="ppi-pill"><span class="eyebrow">PPI</span> <span id="ppi-readout">96 px/in</span></span>
+      </div>
+    </div>
+
+    <!-- Status -->
+    <div id="cal-status" class="cal-status warn" role="status" aria-live="polite">
+      ▲ {t("status.default")}. {t("status.calhint")}
+    </div>
+
+    <!-- Measuring surface -->
+    <div id="ruler-surface" class="ruler-surface" aria-label="Measuring area">
+      <canvas id="ruler-canvas"></canvas>
+      <p class="surface-hint" id="surface-hint" data-i18n="tool.hint.measure">{t("tool.hint.measure")}</p>
+    </div>
+
+    <p class="tool-foot">
+      <a href="/calibrate/" class="tool-foot-link" data-i18n="nav.calibrate">{t("nav.calibrate")}</a>
+      <span aria-hidden="true">·</span>
+      <a href="/ppi-calculator/" class="tool-foot-link" data-i18n="nav.ppi">{t("nav.ppi")}</a>
+    </p>
+  </div>
+
+  <!-- Share toast -->
+  <div id="share-toast" class="toast" hidden role="status" aria-live="polite" data-i18n="tool.toast.copied">{t("tool.toast.copied")}</div>
+</section>
+
+<script>
+  import { initRuler, type RulerApi } from "../scripts/ruler.ts";
+  import { initDevicePicker } from "../scripts/devicePicker.ts";
+
+  const shell = document.getElementById("tool");
+  const defaultUnit = (shell?.dataset.defaultUnit as "cm" | "inch") || "cm";
+  initRuler({ defaultUnit });
+  const R = (window as Window & { __ruler?: RulerApi }).__ruler!;
+
+  function trc(key: string, fallback: string): string {
+    const fn = (window as Window & { __t?: (k: string) => string | undefined }).__t;
+    return (fn && fn(key)) || fallback;
+  }
+
+  // Units
+  document.querySelectorAll<HTMLButtonElement>("[data-unit]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll<HTMLButtonElement>("[data-unit]").forEach((b) => {
+        b.classList.toggle("is-active", b === btn);
+        b.setAttribute("aria-selected", b === btn ? "true" : "false");
+      });
+      R.setUnit(btn.dataset.unit as "cm" | "inch");
+    });
+  });
+
+  // Mode
+  const hint = document.getElementById("surface-hint");
+  let currentMode: "measure" | "angle" = "measure";
+  function setHint() {
+    if (!hint) return;
+    hint.textContent =
+      currentMode === "angle"
+        ? trc("tool.hint.angle", "Tap three points: first the vertex, then each arm, to read the angle.")
+        : trc("tool.hint.measure", "Drag anywhere to measure. Drag the free ruler to move or rotate it.");
+  }
+  document.querySelectorAll<HTMLButtonElement>("[data-mode]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll<HTMLButtonElement>("[data-mode]").forEach((b) => {
+        b.classList.toggle("is-active", b === btn);
+        b.setAttribute("aria-selected", b === btn ? "true" : "false");
+      });
+      currentMode = btn.dataset.mode as "measure" | "angle";
+      R.setMode(currentMode);
+      setHint();
+    });
+  });
+  window.addEventListener("ror:lang", setHint);
+
+  // Edges
+  document.querySelectorAll<HTMLInputElement>("[data-edge]").forEach((input) => {
+    input.addEventListener("change", () => {
+      R.toggleEdge(input.dataset.edge as "top" | "bottom" | "left" | "right", input.checked);
+    });
+  });
+
+  // Free ruler
+  const freeToggle = document.getElementById("free-toggle") as HTMLInputElement;
+  freeToggle.addEventListener("change", () => R.toggleFree(freeToggle.checked));
+  document.querySelectorAll<HTMLButtonElement>("[data-free]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll<HTMLButtonElement>("[data-free]").forEach((b) =>
+        b.classList.toggle("is-active", b === btn),
+      );
+      if (!freeToggle.checked) freeToggle.checked = true;
+      R.setFreeOrientation(btn.dataset.free as "h" | "v" | "d");
+    });
+  });
+
+  // Object overlay
+  const objSelect = document.getElementById("object-select") as HTMLSelectElement;
+  R.refObjects().forEach((o) => {
+    const opt = document.createElement("option");
+    opt.value = o.id;
+    opt.textContent = o.name;
+    objSelect.appendChild(opt);
+  });
+  objSelect.addEventListener("change", () => R.setObject(objSelect.value || null));
+
+  // Device quick-scale picker (searchable, hundreds of devices)
+  const pickerEl = document.getElementById("device-picker");
+  if (pickerEl) {
+    initDevicePicker(pickerEl, (index) => R.applyDevicePreset(index));
+  }
+
+  // Fullscreen
+  const surface = document.getElementById("ruler-surface");
+  document.getElementById("btn-fullscreen")?.addEventListener("click", () => {
+    if (!document.fullscreenElement) surface?.requestFullscreen?.().catch(() => {});
+    else document.exitFullscreen?.();
+  });
+
+  document.getElementById("btn-clear")?.addEventListener("click", () => R.clearMeasure());
+
+  // Share calibration link
+  const toast = document.getElementById("share-toast");
+  document.getElementById("btn-share")?.addEventListener("click", async () => {
+    const link = R.shareLink();
+    try {
+      await navigator.clipboard.writeText(link);
+    } catch {
+      window.prompt("Copy your calibration link:", link);
+    }
+    if (toast) {
+      toast.hidden = false;
+      setTimeout(() => (toast.hidden = true), 2400);
+    }
+  });
+</script>
+
+<style>
+  .tool-shell {
+    padding-block: 32px 32px;
+  }
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px 24px;
+    padding: 16px 20px;
+  }
+  .toolbar-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .toolbar-actions {
+    margin-left: auto;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .seg {
+    display: inline-flex;
+    background: var(--color-canvas-soft-2);
+    border-radius: var(--radius-pill);
+    padding: 3px;
+  }
+  .seg-btn {
+    border: 0;
+    background: transparent;
+    color: var(--color-body);
+    font: 500 14px var(--font-sans);
+    padding: 6px 14px;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .seg-btn.is-active {
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    box-shadow: var(--shadow-subtle);
+  }
+  .seg-free {
+    margin-left: 2px;
+  }
+  .chk-free {
+    font-weight: 500;
+    color: var(--color-ink);
+  }
+  .edge-grid {
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    gap: 4px 16px;
+  }
+  .chk {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font: 400 14px var(--font-sans);
+    color: var(--color-body);
+    cursor: pointer;
+  }
+  .chk input {
+    accent-color: var(--color-ink);
+    width: 15px;
+    height: 15px;
+  }
+  .btn-sm {
+    font-size: 14px;
+    padding: 7px 14px;
+  }
+  .ppi-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font: 500 13px var(--font-mono);
+    color: var(--color-body);
+    background: var(--color-canvas-soft-2);
+    border-radius: var(--radius-pill);
+    padding: 5px 12px;
+  }
+  .field {
+    height: 38px;
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-sm);
+    padding: 0 12px;
+    font: 400 14px var(--font-sans);
+    background: var(--color-canvas);
+    color: var(--color-ink);
+  }
+  .field:focus-visible {
+    outline: 2px solid var(--color-link);
+    outline-offset: 1px;
+    border-color: var(--color-link);
+  }
+  .field-select {
+    max-width: 200px;
+    cursor: pointer;
+  }
+  .field-device {
+    max-width: 220px;
+    font-weight: 500;
+  }
+  .cal-status {
+    margin-top: 12px;
+    font: 500 14px var(--font-sans);
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+  }
+  .cal-status.warn {
+    background: var(--color-warning-soft);
+    color: var(--color-warning-deep);
+  }
+  .cal-status.ok {
+    background: var(--color-link-bg-soft);
+    color: var(--color-link-deep);
+  }
+  .ruler-surface {
+    position: relative;
+    margin-top: 16px;
+    height: min(70vh, 560px);
+    background:
+      linear-gradient(var(--color-hairline) 1px, transparent 1px) 0 0 / 100% 24px,
+      linear-gradient(90deg, var(--color-hairline) 1px, transparent 1px) 0 0 / 24px 100%,
+      var(--color-canvas);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+    overflow: hidden;
+    touch-action: none;
+  }
+  .ruler-surface:fullscreen {
+    height: 100vh;
+    border-radius: 0;
+    background:
+      linear-gradient(var(--color-hairline) 1px, transparent 1px) 0 0 / 100% 24px,
+      linear-gradient(90deg, var(--color-hairline) 1px, transparent 1px) 0 0 / 24px 100%,
+      var(--color-canvas);
+  }
+  #ruler-canvas {
+    position: absolute;
+    inset: 0;
+    cursor: crosshair;
+  }
+  .surface-hint {
+    position: absolute;
+    left: 50%;
+    bottom: 16px;
+    transform: translateX(-50%);
+    margin: 0;
+    max-width: 80%;
+    text-align: center;
+    font: 400 13px var(--font-sans);
+    color: var(--color-mute);
+    pointer-events: none;
+  }
+  .tool-foot {
+    margin: 16px 0 0;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    color: var(--color-mute);
+    font: 400 14px var(--font-sans);
+  }
+  .tool-foot-link {
+    color: var(--color-link);
+    text-decoration: none;
+  }
+  .tool-foot-link:hover {
+    text-decoration: underline;
+  }
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 60;
+    background: var(--color-ink);
+    color: var(--color-on-primary);
+    font: 500 14px var(--font-sans);
+    padding: 12px 18px;
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-float);
+  }
+  .toast[hidden] {
+    display: none;
+  }
+  @media (max-width: 860px) {
+    .toolbar-actions {
+      margin-left: 0;
+      width: 100%;
+    }
+  }
+  @media (max-width: 640px) {
+    .tool-shell {
+      padding-block: 24px 24px;
+    }
+    .toolbar {
+      gap: 14px 16px;
+      padding: 14px 16px;
+    }
+    .toolbar-group {
+      flex: 1 1 100%;
+      flex-wrap: wrap;
+    }
+    .toolbar-group .field,
+    .toolbar-group .field-select {
+      flex: 1;
+      max-width: none;
+    }
+    .seg {
+      flex: 1;
+    }
+    .seg-btn {
+      flex: 1;
+      text-align: center;
+    }
+    .seg-free {
+      flex-basis: 100%;
+    }
+    .toolbar-actions {
+      gap: 8px;
+    }
+    .toolbar-actions .btn-secondary {
+      flex: 1;
+    }
+    .ppi-pill {
+      flex-basis: 100%;
+      justify-content: center;
+    }
+    .ruler-surface {
+      height: min(62vh, 460px);
+    }
+  }
+</style>

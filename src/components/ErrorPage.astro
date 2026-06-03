@@ -1,0 +1,89 @@
+---
+import Header from "./Header.astro";
+import Footer from "./Footer.astro";
+
+export interface Props {
+  code: string;
+  heading: string;
+  message: string;
+  showRetry?: boolean;
+}
+const { code, heading, message, showRetry = false } = Astro.props;
+---
+
+<Header />
+<main>
+  <section class="errp">
+    <div class="container-page errp-inner">
+      <p class="eyebrow errp-code">{code}</p>
+      <h1 class="display-lg errp-title">{heading}</h1>
+      <p class="errp-lead">{message}</p>
+      <div class="errp-cta">
+        <a href="/" class="btn-primary">Open the ruler</a>
+        {showRetry ? (
+          <button type="button" class="btn-secondary" onclick="location.reload()">Try again</button>
+        ) : (
+          <a href="/how-to-use/" class="btn-secondary">How to use</a>
+        )}
+      </div>
+      <nav class="errp-links" aria-label="Helpful links">
+        <a href="/cm-ruler/">CM ruler</a>
+        <a href="/inch-ruler/">Inch ruler</a>
+        <a href="/mm-ruler/">MM ruler</a>
+        <a href="/converter/">Converter</a>
+        <a href="/calibrate/">Calibrate</a>
+        <a href="/faq/">FAQ</a>
+        <a href="/contact/">Contact</a>
+      </nav>
+    </div>
+  </section>
+</main>
+<Footer />
+
+<style>
+  .errp {
+    padding-block: 80px 64px;
+  }
+  .errp-inner {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .errp-code {
+    color: var(--color-mute);
+    margin-bottom: 8px;
+  }
+  .errp-title {
+    margin: 0;
+    max-width: 20ch;
+  }
+  .errp-lead {
+    margin: 16px 0 0;
+    max-width: 54ch;
+    color: var(--color-body);
+    font: 400 18px / 28px var(--font-sans);
+  }
+  .errp-cta {
+    margin-top: 28px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .errp-links {
+    margin-top: 36px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    justify-content: center;
+  }
+  .errp-links a {
+    font: 400 14px var(--font-sans);
+    color: var(--color-link);
+    text-decoration: none;
+  }
+  .errp-links a:hover {
+    text-decoration: underline;
+  }
+</style>

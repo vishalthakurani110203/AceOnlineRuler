@@ -1,0 +1,54 @@
+---
+// A responsive AdSense ad unit. Renders nothing until both a
+// publisher ID and a slot ID are configured, so the layout is
+// clean while you apply for AdSense. After approval, set the
+// publisher ID in src/config.ts and pass the ad unit `slot`.
+import { SITE } from "../config";
+export interface Props {
+  slot?: string;
+  label?: boolean;
+}
+const { slot = "", label = true } = Astro.props;
+const pub = SITE.adsensePublisherId.trim();
+const show = pub.length > 0 && slot.length > 0;
+---
+
+{show && (
+  <aside class="ad-slot" aria-label="Advertisement">
+    {label && <span class="ad-label">Advertisement</span>}
+    <ins
+      class="adsbygoogle"
+      style="display:block"
+      data-ad-client={pub}
+      data-ad-slot={slot}
+      data-ad-format="auto"
+      data-full-width-responsive="true"
+    ></ins>
+    <script is:inline>
+      (window.adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+  </aside>
+)}
+
+<style>
+  .ad-slot {
+    display: block;
+    margin: 32px auto;
+    max-width: 1100px;
+    padding-inline: 24px;
+    text-align: center;
+  }
+  .ad-label {
+    display: block;
+    margin-bottom: 6px;
+    font: 400 11px var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-mute);
+  }
+  @media (max-width: 600px) {
+    .ad-slot {
+      padding-inline: 16px;
+    }
+  }
+</style>

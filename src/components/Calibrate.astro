@@ -1,0 +1,246 @@
+---
+import { t } from "../i18n/server";
+import DevicePicker from "./DevicePicker.astro";
+export interface Props {
+  showHeading?: boolean;
+}
+const { showHeading = true } = Astro.props;
+---
+
+<section id="calibrate" class="cal-methods">
+  <div class="container-page">
+    {showHeading && (
+      <>
+        <p class="eyebrow" data-i18n="cal.eyebrow">{t("cal.eyebrow")}</p>
+        <h2 class="display-lg cal-title" data-i18n="cal.title">{t("cal.title")}</h2>
+        <p class="cal-sub" data-i18n="cal.sub">{t("cal.sub")}</p>
+      </>
+    )}
+
+    <div class="cal-grid">
+      <!-- Method 1 -->
+      <article class="card cal-card">
+        <div class="cal-num">01</div>
+        <h3 class="cal-card-title" data-i18n="cal.m1.title">{t("cal.m1.title")}</h3>
+        <p class="cal-card-body" data-i18n="cal.m1.body">{t("cal.m1.body")}</p>
+        <div class="cal-row">
+          <button id="btn-auto" class="btn-primary btn-sm" type="button" data-i18n="cal.m1.btn">{t("cal.m1.btn")}</button>
+          <DevicePicker id="calibrate-device-picker" />
+        </div>
+        <p id="auto-result" class="cal-result" aria-live="polite"></p>
+      </article>
+
+      <!-- Method 2 -->
+      <article class="card cal-card">
+        <div class="cal-num">02</div>
+        <h3 class="cal-card-title" data-i18n="cal.m2.title">{t("cal.m2.title")}</h3>
+        <p class="cal-card-body" data-i18n="cal.m2.body">{t("cal.m2.body")}</p>
+        <div class="cal-row">
+          <input id="diag-input" class="field" type="number" inputmode="decimal" min="3" max="120" step="0.1" placeholder="15.6" aria-label="Screen diagonal in inches" />
+          <span class="field-suffix" data-i18n="cal.m2.unit">{t("cal.m2.unit")}</span>
+          <button id="btn-diag" class="btn-primary btn-sm" type="button" data-i18n="cal.m2.apply">{t("cal.m2.apply")}</button>
+        </div>
+        <p id="diag-result" class="cal-result" aria-live="polite"></p>
+      </article>
+
+      <!-- Method 3 -->
+      <article class="card cal-card">
+        <div class="cal-num">03</div>
+        <h3 class="cal-card-title" data-i18n="cal.m3.title">{t("cal.m3.title")}</h3>
+        <p class="cal-card-body" data-i18n="cal.m3.body">{t("cal.m3.body")}</p>
+        <button id="btn-card-open" class="btn-primary btn-sm" type="button" data-i18n="cal.m3.btn">{t("cal.m3.btn")}</button>
+      </article>
+    </div>
+  </div>
+
+  <!-- Credit-card calibration modal -->
+  <div id="card-modal" class="modal" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="card-modal-title">
+      <button class="modal-close" type="button" data-close aria-label="Close">✕</button>
+      <h3 id="card-modal-title" class="display-md" data-i18n="cal.modal.title">{t("cal.modal.title")}</h3>
+      <p class="cal-card-body" data-i18n="cal.modal.body">{t("cal.modal.body")}</p>
+      <div class="card-guide">
+        <div id="card-box" class="card-box">
+          <span class="card-chip"></span>
+          <span class="card-label">85.6 mm</span>
+        </div>
+      </div>
+      <input id="card-slider" class="slider" type="range" min="180" max="640" value="324" step="1" aria-label="Adjust card width" />
+      <div class="modal-actions">
+        <button id="btn-card-apply" class="btn-primary" type="button" data-i18n="cal.modal.save">{t("cal.modal.save")}</button>
+        <button class="btn-secondary" type="button" data-close data-i18n="cal.modal.cancel">{t("cal.modal.cancel")}</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { initCalibrate } from "../scripts/calibrate.ts";
+  initCalibrate();
+</script>
+
+<style>
+  .cal-methods {
+    padding-block: 48px 32px;
+    scroll-margin-top: 80px;
+  }
+  .cal-title {
+    margin: 8px 0 0;
+  }
+  .cal-sub {
+    margin: 8px 0 24px;
+    max-width: 60ch;
+    color: var(--color-body);
+    font: 400 16px / 24px var(--font-sans);
+  }
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .cal-card {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .cal-num {
+    font: 500 12px var(--font-mono);
+    color: var(--color-mute);
+  }
+  .cal-card-title {
+    margin: 0;
+    font: 600 20px / 28px var(--font-sans);
+    letter-spacing: -0.02em;
+  }
+  .cal-card-body {
+    margin: 0;
+    color: var(--color-body);
+    font: 400 14px / 20px var(--font-sans);
+    flex: 1;
+  }
+  .cal-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .field {
+    height: 38px;
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-sm);
+    padding: 0 12px;
+    font: 400 14px var(--font-sans);
+    background: var(--color-canvas);
+    color: var(--color-ink);
+  }
+  .field:focus-visible {
+    outline: 2px solid var(--color-link);
+    outline-offset: 1px;
+    border-color: var(--color-link);
+  }
+  input.field {
+    width: 90px;
+  }
+  .field-select {
+    max-width: 200px;
+    cursor: pointer;
+  }
+  .field-suffix {
+    font: 400 14px var(--font-sans);
+    color: var(--color-mute);
+  }
+  .cal-result {
+    margin: 0;
+    min-height: 18px;
+    font: 500 13px var(--font-sans);
+    color: var(--color-mute);
+  }
+  .cal-result.ok {
+    color: var(--color-link-deep);
+  }
+
+  .modal {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: grid;
+    place-items: center;
+  }
+  .modal[hidden] {
+    display: none;
+  }
+  .modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(23, 23, 23, 0.4);
+    backdrop-filter: blur(2px);
+  }
+  .modal-card {
+    position: relative;
+    z-index: 1;
+    width: min(92vw, 760px);
+    background: var(--color-canvas);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-modal);
+    padding: 28px;
+  }
+  .modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 32px;
+    height: 32px;
+    border: 0;
+    border-radius: 9999px;
+    background: var(--color-canvas-soft-2);
+    color: var(--color-body);
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .card-guide {
+    margin: 20px 0;
+    display: grid;
+    place-items: center;
+    min-height: 220px;
+    background: var(--color-canvas-soft);
+    border-radius: var(--radius-md);
+    padding: 24px;
+  }
+  .card-box {
+    position: relative;
+    border: 2px solid var(--color-link);
+    border-radius: 10px;
+    background: rgba(0, 112, 243, 0.06);
+    display: grid;
+    place-items: center;
+  }
+  .card-chip {
+    position: absolute;
+    top: 18%;
+    left: 10%;
+    width: 36px;
+    height: 26px;
+    border-radius: 4px;
+    background: linear-gradient(135deg, #f9cb28, #d4a017);
+  }
+  .card-label {
+    font: 500 13px var(--font-mono);
+    color: var(--color-link-deep);
+  }
+  .slider {
+    width: 100%;
+    accent-color: var(--color-ink);
+  }
+  .modal-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+  }
+  @media (max-width: 860px) {
+    .cal-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

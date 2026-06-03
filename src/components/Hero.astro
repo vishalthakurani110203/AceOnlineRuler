@@ -1,0 +1,99 @@
+---
+import { t } from "../i18n/server";
+---
+
+<section class="hero">
+  <div class="hero-mesh mesh-backdrop" aria-hidden="true"></div>
+  <div class="container-page hero-inner">
+    <p class="eyebrow hero-eyebrow" data-i18n="hero.eyebrow">{t("hero.eyebrow")}</p>
+    <h1 class="display-xl hero-title">
+      <span data-i18n="hero.title">{t("hero.title")}</span><br />
+      <span class="mesh-text" data-i18n="hero.title.accent">{t("hero.title.accent")}</span>
+    </h1>
+    <p class="hero-lead" data-i18n="hero.lead">{t("hero.lead")}</p>
+    <div class="hero-cta">
+      <a href="#tool" class="btn-primary" data-i18n="hero.cta.primary">{t("hero.cta.primary")}</a>
+      <a href="/calibrate/" class="btn-secondary" data-i18n="hero.cta.secondary">{t("hero.cta.secondary")}</a>
+    </div>
+
+    <dl class="hero-stats">
+      <div class="hero-stat">
+        <dt class="hero-stat-value">3</dt>
+        <dd class="hero-stat-label" data-i18n="hero.stat.methods">{t("hero.stat.methods")}</dd>
+      </div>
+      <div class="hero-stat">
+        <dt class="hero-stat-value">0.01</dt>
+        <dd class="hero-stat-label" data-i18n="hero.stat.precision">{t("hero.stat.precision")}</dd>
+      </div>
+      <div class="hero-stat">
+        <dt class="hero-stat-value">100%</dt>
+        <dd class="hero-stat-label" data-i18n="hero.stat.browser">{t("hero.stat.browser")}</dd>
+      </div>
+    </dl>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: 96px 48px;
+  }
+  .hero-mesh {
+    position: absolute;
+    inset: -20% -10% auto -10%;
+    height: 520px;
+    z-index: 0;
+    opacity: 0.9;
+    pointer-events: none;
+  }
+  .hero-inner {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .hero-eyebrow {
+    color: var(--color-body);
+    margin-bottom: 18px;
+  }
+  .hero-title {
+    margin: 0;
+    max-width: 16ch;
+  }
+  .hero-lead {
+    margin: 20px 0 0;
+    max-width: 56ch;
+    color: var(--color-body);
+    font: 400 18px / 28px var(--font-sans);
+  }
+  .hero-cta {
+    margin-top: 28px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .hero-stats {
+    margin: 48px 0 0;
+    display: flex;
+    gap: 48px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .hero-stat {
+    text-align: center;
+  }
+  .hero-stat-value {
+    font: 600 28px var(--font-sans);
+    letter-spacing: -0.03em;
+    color: var(--color-ink);
+  }
+  .hero-stat-label {
+    margin: 2px 0 0;
+    font: 400 13px var(--font-sans);
+    color: var(--color-mute);
+  }
+</style>
