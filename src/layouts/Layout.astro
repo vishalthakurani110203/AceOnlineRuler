@@ -78,10 +78,21 @@ const jsonLd = {
       <Fragment>
         <!-- Google tag (gtag.js) -->
         <script async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}></script>
-        <script is:inline set:html={`window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', '${gaId}');`} />
+        <script is:inline set:html={`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('consent', 'default', {
+            ad_storage: 'denied',
+            ad_user_data: 'denied',
+            ad_personalization: 'denied',
+            analytics_storage: 'denied',
+            functionality_storage: 'granted',
+            security_storage: 'granted',
+            wait_for_update: 500,
+          });
+          gtag('js', new Date());
+          gtag('config', '${gaId}');
+        `} />
       </Fragment>
     )}
 
@@ -93,6 +104,13 @@ gtag('config', '${gaId}');`} />
     <link rel="canonical" href={canonical} />
 
     {adsenseId && <meta name="google-adsense-account" content={adsenseId} />}
+    {adsenseId && (
+      <script
+        async
+        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseId}`}
+        crossorigin="anonymous"
+      ></script>
+    )}
 
     <!-- Open Graph -->
     <meta property="og:type" content={ogType} />

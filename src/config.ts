@@ -12,7 +12,7 @@ export const SITE = {
   name: "Ace Online Ruler",
 
   /** e.g. "ca-pub-1234567890123456" — leave "" until approved. */
-  adsensePublisherId: "",
+  adsensePublisherId: "ca-pub-3740092922912999",
 
   /** Google Analytics 4 Measurement ID, e.g. "G-XXXXXXXXXX". */
   gaMeasurementId: "G-WVC5DL39VQ",
